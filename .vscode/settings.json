@@ -1,0 +1,16 @@
+{
+    "files.associations": {
+        "array": "c",
+        "format": "c",
+        "initializer_list": "c",
+        "span": "c",
+        "utility": "c",
+        "vector": "c",
+        "xstring": "c",
+        "xtree": "c",
+        "xutility": "c",
+        "stdlib.h": "c",
+        "charconv": "cpp",
+        "xmemory": "cpp"
+    }
+}
