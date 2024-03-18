@@ -51,8 +51,14 @@ pub fn create(self: *Shader) !void {
         @panic("ERROR: Creating shader without fragment shader");
     }
 
-    defer gl.deleteShader(self.vs.?);
-    defer gl.deleteShader(self.fs.?);
+    defer {
+        gl.deleteShader(self.vs.?);
+        gl.deleteShader(self.fs.?);
+
+        if (self.gs) |gs| {
+            gl.deleteShader(gs);
+        }
+    }
 
     if (self.gs) |gs| {
         gl.attachShader(self.program_id, gs);
@@ -76,10 +82,6 @@ pub fn create(self: *Shader) !void {
     }
 
     gl.validateProgram(self.program_id);
-
-    if (self.gs) |gs| {
-        gl.deleteShader(gs);
-    }
 }
 
 pub fn deinit(self: *Shader) Shader {

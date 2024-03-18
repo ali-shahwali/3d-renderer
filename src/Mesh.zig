@@ -122,19 +122,6 @@ pub fn loadFromModel(self: *Mesh, model: *zmesh.io.zcgltf.Data, mesh_index: u32)
 
 pub fn draw(self: *const Mesh, shader: *Shader) void {
     _ = shader;
-    // if (self.model.textures) |textures| {
-    //     var i: c_uint = 0;
-    //     while (i < self.model.textures_count) : (i += 1) {
-    //         const tex: zmesh.io.zcgltf.Texture = textures[i];
-    //         std.debug.print("{s}", .{tex.image.?.name.?[0..4]});
-    //         // gl.activeTexture(gl.TEXTURE0 + i);
-
-    //         // gl.uniform1i(gl.getUniformLocation(shader.program_id, tex.name), @intCast(i));
-    //         // gl.bindTexture(gl.TEXTURE_2D, i);
-    //     }
-
-    //     // gl.activeTexture(gl.TEXTURE0);
-    // }
 
     gl.bindVertexArray(self.VAO);
     gl.drawElements(gl.TRIANGLES, @intCast(self.indices.items.len), gl.UNSIGNED_INT, addressToVoidPtr(0));

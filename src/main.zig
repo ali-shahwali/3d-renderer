@@ -12,7 +12,6 @@ const Camera = @import("Camera.zig");
 const Shader = @import("Shader.zig");
 const Model = @import("Model.zig");
 const Renderer = @import("Renderer.zig");
-// const Entity = @import("Entity.zig");
 
 const WINSIZE = [2]u32{ 1440, 1080 };
 
@@ -29,7 +28,7 @@ const Mouse = struct {
 };
 
 var mouse = Mouse{ .x = 0, .y = 0 };
-var camera = Camera.init(math.f32x4(-30, 20, 0, 1));
+var camera = Camera.init(math.f32x4(55, 12, 3, 90));
 var delta_time: f32 = 0;
 var last_frame: f32 = 0;
 
@@ -75,7 +74,7 @@ pub fn main() !void {
 
     var cube = Model.init(allocator);
     defer cube.deinit();
-    try cube.loadGLTF("./src/meshes/mountains.glb");
+    try cube.loadGLTF("./src/meshes/mountain.glb");
 
     var light = Model.init(allocator);
     defer light.deinit();
@@ -131,7 +130,7 @@ pub fn main() !void {
         shader.setVec3("material.ambient", 1.0, 0.5, 0.31);
         shader.setVec3("material.diffuse", 1.0, 0.5, 0.31);
         shader.setVec3("material.specular", 0.5, 0.5, 0.5);
-        shader.setFloat("material.shininess", 32.0);
+        shader.setFloat("material.shininess", 1.0);
 
         cube.draw(&shader);
 

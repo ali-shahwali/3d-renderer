@@ -83,7 +83,7 @@ pub fn renderScene(self: *Renderer, camera: *Camera, window: *const glfw.Window)
     gl.clearColor(0.1, 0.1, 0.1, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    const projection = math.perspectiveFovRhGl(math.deg2rad(camera.zoom), WINSIZE[0] / WINSIZE[1], 0.1, 100);
+    const projection = math.perspectiveFovRhGl(math.deg2rad(camera.zoom), WINSIZE[0] / WINSIZE[1], 0.1, 300);
     const view = camera.getView();
 
     gl.bindBuffer(gl.UNIFORM_BUFFER, self.UBO_matrices);
