@@ -23,6 +23,8 @@ pub const __builtin_log2f = @import("std").zig.c_builtins.__builtin_log2f;
 pub const __builtin_log10 = @import("std").zig.c_builtins.__builtin_log10;
 pub const __builtin_log10f = @import("std").zig.c_builtins.__builtin_log10f;
 pub const __builtin_abs = @import("std").zig.c_builtins.__builtin_abs;
+pub const __builtin_labs = @import("std").zig.c_builtins.__builtin_labs;
+pub const __builtin_llabs = @import("std").zig.c_builtins.__builtin_llabs;
 pub const __builtin_fabs = @import("std").zig.c_builtins.__builtin_fabs;
 pub const __builtin_fabsf = @import("std").zig.c_builtins.__builtin_fabsf;
 pub const __builtin_floor = @import("std").zig.c_builtins.__builtin_floor;
@@ -54,9 +56,11 @@ pub const __builtin_constant_p = @import("std").zig.c_builtins.__builtin_constan
 pub const __builtin_mul_overflow = @import("std").zig.c_builtins.__builtin_mul_overflow;
 pub const __builtin_va_list = [*c]u8;
 pub const __gnuc_va_list = __builtin_va_list;
-pub const va_list = __gnuc_va_list; // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:590:3: warning: TODO implement translation of stmt class GCCAsmStmtClass
-// C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:587:36: warning: unable to translate function, demoted to extern
-pub extern fn __debugbreak() void;
+pub const va_list = __gnuc_va_list; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:584:3: warning: TODO implement translation of stmt class GCCAsmStmtClass
+// C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:581:36: warning: unable to translate function, demoted to extern
+pub extern fn __debugbreak() void; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:605:3: warning: TODO implement translation of stmt class GCCAsmStmtClass
+// C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:602:60: warning: unable to translate function, demoted to extern
+pub extern fn __fastfail(arg_code: c_uint) noreturn;
 pub extern fn __mingw_get_crt_info() [*c]const u8;
 pub const rsize_t = usize;
 pub const ptrdiff_t = c_longlong;
@@ -67,60 +71,31 @@ pub const errno_t = c_int;
 pub const __time32_t = c_long;
 pub const __time64_t = c_longlong;
 pub const time_t = __time64_t;
-pub const struct_tagLC_ID = extern struct {
-    wLanguage: c_ushort,
-    wCountry: c_ushort,
-    wCodePage: c_ushort,
-};
-pub const LC_ID = struct_tagLC_ID;
-const struct_unnamed_1 = extern struct {
-    locale: [*c]u8,
-    wlocale: [*c]wchar_t,
-    refcount: [*c]c_int,
-    wrefcount: [*c]c_int,
-};
-pub const struct_lconv = opaque {};
-pub const struct___lc_time_data = opaque {};
 pub const struct_threadlocaleinfostruct = extern struct {
-    refcount: c_int,
-    lc_codepage: c_uint,
-    lc_collate_cp: c_uint,
-    lc_handle: [6]c_ulong,
-    lc_id: [6]LC_ID,
-    lc_category: [6]struct_unnamed_1,
-    lc_clike: c_int,
-    mb_cur_max: c_int,
-    lconv_intl_refcount: [*c]c_int,
-    lconv_num_refcount: [*c]c_int,
-    lconv_mon_refcount: [*c]c_int,
-    lconv: ?*struct_lconv,
-    ctype1_refcount: [*c]c_int,
-    ctype1: [*c]c_ushort,
-    pctype: [*c]const c_ushort,
-    pclmap: [*c]const u8,
-    pcumap: [*c]const u8,
-    lc_time_curr: ?*struct___lc_time_data,
+    _locale_pctype: [*c]const c_ushort = @import("std").mem.zeroes([*c]const c_ushort),
+    _locale_mb_cur_max: c_int = @import("std").mem.zeroes(c_int),
+    _locale_lc_codepage: c_uint = @import("std").mem.zeroes(c_uint),
 };
 pub const struct_threadmbcinfostruct = opaque {};
 pub const pthreadlocinfo = [*c]struct_threadlocaleinfostruct;
 pub const pthreadmbcinfo = ?*struct_threadmbcinfostruct;
+pub const struct___lc_time_data = opaque {};
 pub const struct_localeinfo_struct = extern struct {
-    locinfo: pthreadlocinfo,
-    mbcinfo: pthreadmbcinfo,
+    locinfo: pthreadlocinfo = @import("std").mem.zeroes(pthreadlocinfo),
+    mbcinfo: pthreadmbcinfo = @import("std").mem.zeroes(pthreadmbcinfo),
 };
 pub const _locale_tstruct = struct_localeinfo_struct;
 pub const _locale_t = [*c]struct_localeinfo_struct;
+pub const struct_tagLC_ID = extern struct {
+    wLanguage: c_ushort = @import("std").mem.zeroes(c_ushort),
+    wCountry: c_ushort = @import("std").mem.zeroes(c_ushort),
+    wCodePage: c_ushort = @import("std").mem.zeroes(c_ushort),
+};
+pub const LC_ID = struct_tagLC_ID;
 pub const LPLC_ID = [*c]struct_tagLC_ID;
 pub const threadlocinfo = struct_threadlocaleinfostruct;
 pub const struct__iobuf = extern struct {
-    _ptr: [*c]u8,
-    _cnt: c_int,
-    _base: [*c]u8,
-    _flag: c_int,
-    _file: c_int,
-    _charbuf: c_int,
-    _bufsiz: c_int,
-    _tmpfname: [*c]u8,
+    _Placeholder: ?*anyopaque = @import("std").mem.zeroes(?*anyopaque),
 };
 pub const FILE = struct__iobuf;
 pub const _off_t = c_long;
@@ -139,72 +114,39 @@ pub extern fn __mingw_fscanf(noalias _File: [*c]FILE, noalias _Format: [*c]const
 pub extern fn __mingw_vfscanf(noalias fp: [*c]FILE, noalias Format: [*c]const u8, argp: va_list) c_int;
 pub extern fn __mingw_vsnprintf(noalias _DstBuf: [*c]u8, _MaxCount: usize, noalias _Format: [*c]const u8, _ArgList: va_list) c_int;
 pub extern fn __mingw_snprintf(noalias s: [*c]u8, n: usize, noalias format: [*c]const u8, ...) c_int;
-pub const __mingw_printf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:184:15
-pub const __mingw_vprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:187:15
-pub const __mingw_fprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:190:15
-pub const __mingw_vfprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:193:15
-pub const __mingw_sprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:196:15
-pub const __mingw_vsprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:199:15
-pub const __mingw_asprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:202:15
-pub const __mingw_vasprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:205:15
+pub const __mingw_printf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:195:15
+pub const __mingw_vprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:198:15
+pub const __mingw_fprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:201:15
+pub const __mingw_vfprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:204:15
+pub const __mingw_sprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:207:15
+pub const __mingw_vsprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:210:15
+pub const __mingw_asprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:213:15
+pub const __mingw_vasprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:216:15
 pub extern fn __ms_sscanf(noalias _Src: [*c]const u8, noalias _Format: [*c]const u8, ...) c_int;
 pub extern fn __ms_scanf(noalias _Format: [*c]const u8, ...) c_int;
 pub extern fn __ms_fscanf(noalias _File: [*c]FILE, noalias _Format: [*c]const u8, ...) c_int;
-pub const __ms_printf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:219:15
-pub const __ms_vprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:222:15
-pub const __ms_fprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:225:15
-pub const __ms_vfprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:228:15
-pub const __ms_sprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:231:15
-pub const __ms_vsprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:234:15
-// C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:290:5: warning: TODO unable to translate variadic function, demoted to extern
-pub extern fn sscanf(__source: [*c]const u8, __format: [*c]const u8, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:301:5: warning: TODO unable to translate variadic function, demoted to extern
-pub extern fn scanf(__format: [*c]const u8, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:312:5: warning: TODO unable to translate variadic function, demoted to extern
-pub extern fn fscanf(__stream: [*c]FILE, __format: [*c]const u8, ...) c_int;
-pub fn vsscanf(arg___source: [*c]const u8, arg___format: [*c]const u8, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
-    var __source = arg___source;
-    var __format = arg___format;
-    var __local_argv = arg___local_argv;
-    return __mingw_vsscanf(__source, __format, __local_argv);
-}
-pub fn vscanf(arg___format: [*c]const u8, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
-    var __format = arg___format;
-    var __local_argv = arg___local_argv;
-    return __mingw_vfscanf(__acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 0)))), __format, __local_argv);
-}
-pub fn vfscanf(arg___stream: [*c]FILE, arg___format: [*c]const u8, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
-    var __stream = arg___stream;
-    var __format = arg___format;
-    var __local_argv = arg___local_argv;
-    return __mingw_vfscanf(__stream, __format, __local_argv);
-} // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:357:5: warning: TODO unable to translate variadic function, demoted to extern
-pub extern fn fprintf(__stream: [*c]FILE, __format: [*c]const u8, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:368:5: warning: TODO unable to translate variadic function, demoted to extern
-pub extern fn printf(__format: [*c]const u8, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:396:5: warning: TODO unable to translate variadic function, demoted to extern
-pub extern fn sprintf(__stream: [*c]u8, __format: [*c]const u8, ...) c_int;
-pub fn vfprintf(arg___stream: [*c]FILE, arg___format: [*c]const u8, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
-    var __stream = arg___stream;
-    var __format = arg___format;
-    var __local_argv = arg___local_argv;
-    return __mingw_vfprintf(__stream, __format, __local_argv);
-}
-pub fn vprintf(arg___format: [*c]const u8, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
-    var __format = arg___format;
-    var __local_argv = arg___local_argv;
-    return __mingw_vfprintf(__acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 1)))), __format, __local_argv);
-}
-pub fn vsprintf(arg___stream: [*c]u8, arg___format: [*c]const u8, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
-    var __stream = arg___stream;
-    var __format = arg___format;
-    var __local_argv = arg___local_argv;
-    return __mingw_vsprintf(__stream, __format, __local_argv);
-} // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:451:5: warning: TODO unable to translate variadic function, demoted to extern
-pub extern fn snprintf(__stream: [*c]u8, __n: usize, __format: [*c]const u8, ...) c_int;
-pub fn vsnprintf(arg___stream: [*c]u8, arg___n: usize, arg___format: [*c]const u8, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
-    var __stream = arg___stream;
-    var __n = arg___n;
-    var __format = arg___format;
-    var __local_argv = arg___local_argv;
-    return __mingw_vsnprintf(__stream, __n, __format, __local_argv);
-}
+pub const __ms_printf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:230:15
+pub const __ms_vprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:233:15
+pub const __ms_fprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:236:15
+pub const __ms_vfprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:239:15
+pub const __ms_sprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:242:15
+pub const __ms_vsprintf = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:245:15
+pub extern fn __stdio_common_vsprintf(options: c_ulonglong, str: [*c]u8, len: usize, format: [*c]const u8, locale: _locale_t, valist: va_list) c_int;
+pub extern fn __stdio_common_vfprintf(options: c_ulonglong, file: [*c]FILE, format: [*c]const u8, locale: _locale_t, valist: va_list) c_int;
+pub extern fn __stdio_common_vsscanf(options: c_ulonglong, input: [*c]const u8, length: usize, format: [*c]const u8, locale: _locale_t, valist: va_list) c_int;
+pub extern fn __stdio_common_vfscanf(options: c_ulonglong, file: [*c]FILE, format: [*c]const u8, locale: _locale_t, valist: va_list) c_int;
+pub extern fn fprintf(_File: [*c]FILE, _Format: [*c]const u8, ...) c_int;
+pub extern fn printf(_Format: [*c]const u8, ...) c_int;
+pub extern fn sprintf(_Dest: [*c]u8, _Format: [*c]const u8, ...) c_int;
+pub extern fn vfprintf(_File: [*c]FILE, _Format: [*c]const u8, _ArgList: __builtin_va_list) c_int;
+pub extern fn vprintf(_Format: [*c]const u8, _ArgList: __builtin_va_list) c_int;
+pub extern fn vsprintf(_Dest: [*c]u8, _Format: [*c]const u8, _Args: __builtin_va_list) c_int;
+pub extern fn fscanf(noalias _File: [*c]FILE, noalias _Format: [*c]const u8, ...) c_int;
+pub extern fn scanf(noalias _Format: [*c]const u8, ...) c_int;
+pub extern fn sscanf(noalias _Src: [*c]const u8, noalias _Format: [*c]const u8, ...) c_int;
+pub extern fn vfscanf(noalias __stream: [*c]FILE, noalias __format: [*c]const u8, __local_argv: __builtin_va_list) c_int;
+pub extern fn vsscanf(noalias __source: [*c]const u8, noalias __format: [*c]const u8, __local_argv: __builtin_va_list) c_int;
+pub extern fn vscanf(noalias __format: [*c]const u8, __local_argv: __builtin_va_list) c_int;
 pub extern fn _filbuf(_File: [*c]FILE) c_int;
 pub extern fn _flsbuf(_Ch: c_int, _File: [*c]FILE) c_int;
 pub extern fn _fsopen(_Filename: [*c]const u8, _Mode: [*c]const u8, _ShFlag: c_int) [*c]FILE;
@@ -236,10 +178,34 @@ pub extern fn fseek(_File: [*c]FILE, _Offset: c_long, _Origin: c_int) c_int;
 pub extern fn ftell(_File: [*c]FILE) c_long;
 pub extern fn _fseeki64(_File: [*c]FILE, _Offset: c_longlong, _Origin: c_int) c_int;
 pub extern fn _ftelli64(_File: [*c]FILE) c_longlong;
-pub extern fn fseeko64(stream: [*c]FILE, offset: _off64_t, whence: c_int) c_int;
-pub extern fn fseeko(stream: [*c]FILE, offset: _off_t, whence: c_int) c_int;
-pub extern fn ftello(stream: [*c]FILE) _off_t;
-pub extern fn ftello64(stream: [*c]FILE) _off64_t;
+pub fn fseeko(arg__File: [*c]FILE, arg__Offset: _off_t, arg__Origin: c_int) callconv(.C) c_int {
+    var _File = arg__File;
+    _ = &_File;
+    var _Offset = arg__Offset;
+    _ = &_Offset;
+    var _Origin = arg__Origin;
+    _ = &_Origin;
+    return fseek(_File, _Offset, _Origin);
+}
+pub fn fseeko64(arg__File: [*c]FILE, arg__Offset: _off64_t, arg__Origin: c_int) callconv(.C) c_int {
+    var _File = arg__File;
+    _ = &_File;
+    var _Offset = arg__Offset;
+    _ = &_Offset;
+    var _Origin = arg__Origin;
+    _ = &_Origin;
+    return _fseeki64(_File, _Offset, _Origin);
+}
+pub fn ftello(arg__File: [*c]FILE) callconv(.C) _off_t {
+    var _File = arg__File;
+    _ = &_File;
+    return ftell(_File);
+}
+pub fn ftello64(arg__File: [*c]FILE) callconv(.C) _off64_t {
+    var _File = arg__File;
+    _ = &_File;
+    return _ftelli64(_File);
+}
 pub extern fn fwrite(_Str: ?*const anyopaque, _Size: c_ulonglong, _Count: c_ulonglong, _File: [*c]FILE) c_ulonglong;
 pub extern fn getc(_File: [*c]FILE) c_int;
 pub extern fn getchar() c_int;
@@ -263,15 +229,17 @@ pub extern fn setbuf(noalias _File: [*c]FILE, noalias _Buffer: [*c]u8) void;
 pub extern fn _setmaxstdio(_Max: c_int) c_int;
 pub extern fn _set_output_format(_Format: c_uint) c_uint;
 pub extern fn _get_output_format() c_uint;
-pub extern fn setvbuf(noalias _File: [*c]FILE, noalias _Buf: [*c]u8, _Mode: c_int, _Size: usize) c_int;
-pub extern fn _scprintf(noalias _Format: [*c]const u8, ...) c_int;
+pub extern fn setvbuf(noalias _File: [*c]FILE, noalias _Buf: [*c]u8, _Mode: c_int, _Size: usize) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:741:15: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _scprintf(noalias _Format: [*c]const u8, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:752:15: warning: TODO unable to translate variadic function, demoted to extern
 pub extern fn _snscanf(noalias _Src: [*c]const u8, _MaxCount: usize, noalias _Format: [*c]const u8, ...) c_int;
 pub extern fn _vscprintf(noalias _Format: [*c]const u8, _ArgList: va_list) c_int;
 pub extern fn tmpfile() [*c]FILE;
 pub extern fn tmpnam(_Buffer: [*c]u8) [*c]u8;
 pub extern fn ungetc(_Ch: c_int, _File: [*c]FILE) c_int;
+pub extern fn _vsnprintf(noalias _Dest: [*c]u8, _Count: usize, noalias _Format: [*c]const u8, _Args: va_list) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:780:15: warning: TODO unable to translate variadic function, demoted to extern
 pub extern fn _snprintf(noalias _Dest: [*c]u8, _Count: usize, noalias _Format: [*c]const u8, ...) c_int;
-pub extern fn _vsnprintf(noalias _Dest: [*c]u8, _Count: usize, noalias _Format: [*c]const u8, _Args: va_list) c_int;
+pub extern fn vsnprintf(__stream: [*c]u8, __n: c_ulonglong, __format: [*c]const u8, __local_argv: __builtin_va_list) c_int;
+pub extern fn snprintf(__stream: [*c]u8, __n: c_ulonglong, __format: [*c]const u8, ...) c_int;
 pub extern fn _set_printf_count_output(_Value: c_int) c_int;
 pub extern fn _get_printf_count_output() c_int;
 pub extern fn __mingw_swscanf(noalias _Src: [*c]const wchar_t, noalias _Format: [*c]const wchar_t, ...) c_int;
@@ -296,47 +264,56 @@ pub extern fn __ms_wprintf(noalias _Format: [*c]const wchar_t, ...) c_int;
 pub extern fn __ms_vfwprintf(noalias _File: [*c]FILE, noalias _Format: [*c]const wchar_t, _ArgList: va_list) c_int;
 pub extern fn __ms_vwprintf(noalias _Format: [*c]const wchar_t, _ArgList: va_list) c_int;
 pub extern fn __ms_swprintf(noalias [*c]wchar_t, noalias [*c]const wchar_t, ...) c_int;
-pub extern fn __ms_vswprintf(noalias [*c]wchar_t, noalias [*c]const wchar_t, va_list) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:1010:5: warning: TODO unable to translate variadic function, demoted to extern
-pub extern fn swscanf(__source: [*c]const wchar_t, __format: [*c]const wchar_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:1021:5: warning: TODO unable to translate variadic function, demoted to extern
-pub extern fn wscanf(__format: [*c]const wchar_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:1032:5: warning: TODO unable to translate variadic function, demoted to extern
-pub extern fn fwscanf(__stream: [*c]FILE, __format: [*c]const wchar_t, ...) c_int;
-pub fn vswscanf(noalias arg___source: [*c]const wchar_t, noalias arg___format: [*c]const wchar_t, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
+pub extern fn __ms_vswprintf(noalias [*c]wchar_t, noalias [*c]const wchar_t, va_list) c_int;
+pub extern fn __stdio_common_vswprintf(options: c_ulonglong, str: [*c]wchar_t, len: usize, format: [*c]const wchar_t, locale: _locale_t, valist: va_list) c_int;
+pub extern fn __stdio_common_vfwprintf(options: c_ulonglong, file: [*c]FILE, format: [*c]const wchar_t, locale: _locale_t, valist: va_list) c_int;
+pub extern fn __stdio_common_vswscanf(options: c_ulonglong, input: [*c]const wchar_t, length: usize, format: [*c]const wchar_t, locale: _locale_t, valist: va_list) c_int;
+pub extern fn __stdio_common_vfwscanf(options: c_ulonglong, file: [*c]FILE, format: [*c]const wchar_t, locale: _locale_t, valist: va_list) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:1221:15: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn fwscanf(noalias _File: [*c]FILE, noalias _Format: [*c]const wchar_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:1231:15: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn swscanf(noalias _Src: [*c]const wchar_t, noalias _Format: [*c]const wchar_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:1241:15: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn wscanf(noalias _Format: [*c]const wchar_t, ...) c_int;
+pub fn vfwscanf(arg___stream: [*c]FILE, arg___format: [*c]const wchar_t, arg___local_argv: va_list) callconv(.C) c_int {
+    var __stream = arg___stream;
+    _ = &__stream;
+    var __format = arg___format;
+    _ = &__format;
+    var __local_argv = arg___local_argv;
+    _ = &__local_argv;
+    return __stdio_common_vfwscanf(@as(c_ulonglong, 2), __stream, __format, null, __local_argv);
+}
+pub fn vswscanf(noalias arg___source: [*c]const wchar_t, noalias arg___format: [*c]const wchar_t, arg___local_argv: va_list) callconv(.C) c_int {
     var __source = arg___source;
+    _ = &__source;
     var __format = arg___format;
+    _ = &__format;
     var __local_argv = arg___local_argv;
-    return __mingw_vswscanf(__source, __format, __local_argv);
+    _ = &__local_argv;
+    return __stdio_common_vswscanf(@as(c_ulonglong, 2), __source, @as(usize, @bitCast(@as(c_longlong, -@as(c_int, 1)))), __format, null, __local_argv);
 }
-pub fn vwscanf(arg___format: [*c]const wchar_t, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
+pub fn vwscanf(arg___format: [*c]const wchar_t, arg___local_argv: va_list) callconv(.C) c_int {
     var __format = arg___format;
+    _ = &__format;
     var __local_argv = arg___local_argv;
-    return __mingw_vfwscanf(__acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 0)))), __format, __local_argv);
+    _ = &__local_argv;
+    return __stdio_common_vfwscanf(@as(c_ulonglong, 2), __acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 0)))), __format, null, __local_argv);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:1271:15: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn fwprintf(noalias _File: [*c]FILE, noalias _Format: [*c]const wchar_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:1281:15: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn wprintf(noalias _Format: [*c]const wchar_t, ...) c_int;
+pub fn vfwprintf(noalias arg__File: [*c]FILE, noalias arg__Format: [*c]const wchar_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _File = arg__File;
+    _ = &_File;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vfwprintf(@as(c_ulonglong, 4), _File, _Format, null, _ArgList);
 }
-pub fn vfwscanf(arg___stream: [*c]FILE, arg___format: [*c]const wchar_t, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
-    var __stream = arg___stream;
-    var __format = arg___format;
-    var __local_argv = arg___local_argv;
-    return __mingw_vfwscanf(__stream, __format, __local_argv);
-} // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:1068:5: warning: TODO unable to translate variadic function, demoted to extern
-pub extern fn fwprintf(__stream: [*c]FILE, __format: [*c]const wchar_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:1079:5: warning: TODO unable to translate variadic function, demoted to extern
-pub extern fn wprintf(__format: [*c]const wchar_t, ...) c_int;
-pub fn vfwprintf(arg___stream: [*c]FILE, arg___format: [*c]const wchar_t, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
-    var __stream = arg___stream;
-    var __format = arg___format;
-    var __local_argv = arg___local_argv;
-    return __mingw_vfwprintf(__stream, __format, __local_argv);
-}
-pub fn vwprintf(arg___format: [*c]const wchar_t, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
-    var __format = arg___format;
-    var __local_argv = arg___local_argv;
-    return __mingw_vfwprintf(__acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 1)))), __format, __local_argv);
-} // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:1118:5: warning: TODO unable to translate variadic function, demoted to extern
-pub extern fn snwprintf(__stream: [*c]wchar_t, __n: usize, __format: [*c]const wchar_t, ...) c_int;
-pub fn vsnwprintf(arg___stream: [*c]wchar_t, arg___n: usize, arg___format: [*c]const wchar_t, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
-    var __stream = arg___stream;
-    var __n = arg___n;
-    var __format = arg___format;
-    var __local_argv = arg___local_argv;
-    return __mingw_vsnwprintf(__stream, __n, __format, __local_argv);
+pub fn vwprintf(noalias arg__Format: [*c]const wchar_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vfwprintf(@as(c_ulonglong, 4), __acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 1)))), _Format, null, _ArgList);
 }
 pub extern fn _wfsopen(_Filename: [*c]const wchar_t, _Mode: [*c]const wchar_t, _ShFlag: c_int) [*c]FILE;
 pub extern fn fgetwc(_File: [*c]FILE) wint_t;
@@ -351,22 +328,54 @@ pub extern fn ungetwc(_Ch: wint_t, _File: [*c]FILE) wint_t;
 pub extern fn fgetws(noalias _Dst: [*c]wchar_t, _SizeInWords: c_int, noalias _File: [*c]FILE) [*c]wchar_t;
 pub extern fn fputws(noalias _Str: [*c]const wchar_t, noalias _File: [*c]FILE) c_int;
 pub extern fn _getws(_String: [*c]wchar_t) [*c]wchar_t;
-pub extern fn _putws(_Str: [*c]const wchar_t) c_int;
-pub extern fn _scwprintf(noalias _Format: [*c]const wchar_t, ...) c_int;
-pub extern fn _swprintf_c(noalias _DstBuf: [*c]wchar_t, _SizeInWords: usize, noalias _Format: [*c]const wchar_t, ...) c_int;
-pub extern fn _vswprintf_c(noalias _DstBuf: [*c]wchar_t, _SizeInWords: usize, noalias _Format: [*c]const wchar_t, _ArgList: va_list) c_int;
+pub extern fn _putws(_Str: [*c]const wchar_t) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:1365:15: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _scwprintf(noalias _Format: [*c]const wchar_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:1375:15: warning: TODO unable to translate variadic function, demoted to extern
 pub extern fn _snwprintf(noalias _Dest: [*c]wchar_t, _Count: usize, noalias _Format: [*c]const wchar_t, ...) c_int;
-pub extern fn _vsnwprintf(noalias _Dest: [*c]wchar_t, _Count: usize, noalias _Format: [*c]const wchar_t, _Args: va_list) c_int;
-pub extern fn _vscwprintf(noalias _Format: [*c]const wchar_t, _ArgList: va_list) c_int;
+pub extern fn _vsnwprintf(noalias _Dest: [*c]wchar_t, _Count: usize, noalias _Format: [*c]const wchar_t, _Args: va_list) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:1388:7: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn snwprintf(noalias s: [*c]wchar_t, n: usize, noalias format: [*c]const wchar_t, ...) c_int;
+pub fn vsnwprintf(noalias arg_s: [*c]wchar_t, arg_n: usize, noalias arg_format: [*c]const wchar_t, arg_arg: va_list) callconv(.C) c_int {
+    var s = arg_s;
+    _ = &s;
+    var n = arg_n;
+    _ = &n;
+    var format = arg_format;
+    _ = &format;
+    var arg = arg_arg;
+    _ = &arg;
+    var __ret: c_int = __stdio_common_vswprintf(@as(c_ulonglong, 4), s, n, format, null, arg);
+    _ = &__ret;
+    return if (__ret < @as(c_int, 0)) -@as(c_int, 1) else __ret;
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdio.h:1406:15: warning: TODO unable to translate variadic function, demoted to extern
 pub extern fn _swprintf(noalias _Dest: [*c]wchar_t, noalias _Format: [*c]const wchar_t, ...) c_int;
-pub extern fn _vswprintf(noalias _Dest: [*c]wchar_t, noalias _Format: [*c]const wchar_t, _Args: va_list) c_int;
+pub fn _vswprintf(noalias arg__Dest: [*c]wchar_t, noalias arg__Format: [*c]const wchar_t, arg__Args: va_list) callconv(.C) c_int {
+    var _Dest = arg__Dest;
+    _ = &_Dest;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Args = arg__Args;
+    _ = &_Args;
+    return __stdio_common_vswprintf(@as(c_ulonglong, 4), _Dest, @as(usize, @bitCast(@as(c_longlong, -@as(c_int, 1)))), _Format, null, _Args);
+}
+pub fn _vscwprintf(noalias arg__Format: [*c]const wchar_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    var _Result: c_int = __stdio_common_vswprintf(@as(c_ulonglong, 2), null, @as(usize, @bitCast(@as(c_longlong, @as(c_int, 0)))), _Format, null, _ArgList);
+    _ = &_Result;
+    return if (_Result < @as(c_int, 0)) -@as(c_int, 1) else _Result;
+}
 pub fn vswprintf(arg___stream: [*c]wchar_t, arg___count: usize, arg___format: [*c]const wchar_t, arg___local_argv: __builtin_va_list) callconv(.C) c_int {
     var __stream = arg___stream;
+    _ = &__stream;
     var __count = arg___count;
+    _ = &__count;
     var __format = arg___format;
+    _ = &__format;
     var __local_argv = arg___local_argv;
+    _ = &__local_argv;
     return vsnwprintf(__stream, __count, __format, __local_argv);
-} // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/swprintf.inl:34:5: warning: TODO unable to translate variadic function, demoted to extern
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/swprintf.inl:34:5: warning: TODO unable to translate variadic function, demoted to extern
 pub extern fn swprintf(__stream: [*c]wchar_t, __count: usize, __format: [*c]const wchar_t, ...) c_int;
 pub extern fn _wtempnam(_Directory: [*c]const wchar_t, _FilePrefix: [*c]const wchar_t) [*c]wchar_t;
 pub extern fn _snwscanf(noalias _Src: [*c]const wchar_t, _MaxCount: usize, noalias _Format: [*c]const wchar_t, ...) c_int;
@@ -377,8 +386,24 @@ pub extern fn _wperror(_ErrMsg: [*c]const wchar_t) void;
 pub extern fn _wpopen(_Command: [*c]const wchar_t, _Mode: [*c]const wchar_t) [*c]FILE;
 pub extern fn _wremove(_Filename: [*c]const wchar_t) c_int;
 pub extern fn _wtmpnam(_Buffer: [*c]wchar_t) [*c]wchar_t;
+pub extern fn _fgetwc_nolock(_File: [*c]FILE) wint_t;
+pub extern fn _fputwc_nolock(_Ch: wchar_t, _File: [*c]FILE) wint_t;
+pub extern fn _ungetwc_nolock(_Ch: wint_t, _File: [*c]FILE) wint_t;
+pub extern fn _fgetc_nolock(_File: [*c]FILE) c_int;
+pub extern fn _fputc_nolock(_Char: c_int, _File: [*c]FILE) c_int;
+pub extern fn _getc_nolock(_File: [*c]FILE) c_int;
+pub extern fn _putc_nolock(_Char: c_int, _File: [*c]FILE) c_int;
 pub extern fn _lock_file(_File: [*c]FILE) void;
 pub extern fn _unlock_file(_File: [*c]FILE) void;
+pub extern fn _fclose_nolock(_File: [*c]FILE) c_int;
+pub extern fn _fflush_nolock(_File: [*c]FILE) c_int;
+pub extern fn _fread_nolock(noalias _DstBuf: ?*anyopaque, _ElementSize: usize, _Count: usize, noalias _File: [*c]FILE) usize;
+pub extern fn _fseek_nolock(_File: [*c]FILE, _Offset: c_long, _Origin: c_int) c_int;
+pub extern fn _ftell_nolock(_File: [*c]FILE) c_long;
+pub extern fn _fseeki64_nolock(_File: [*c]FILE, _Offset: c_longlong, _Origin: c_int) c_int;
+pub extern fn _ftelli64_nolock(_File: [*c]FILE) c_longlong;
+pub extern fn _fwrite_nolock(noalias _DstBuf: ?*const anyopaque, _Size: usize, _Count: usize, noalias _File: [*c]FILE) usize;
+pub extern fn _ungetc_nolock(_Ch: c_int, _File: [*c]FILE) c_int;
 pub extern fn tempnam(_Directory: [*c]const u8, _FilePrefix: [*c]const u8) [*c]u8;
 pub extern fn fcloseall() c_int;
 pub extern fn fdopen(_FileHandle: c_int, _Format: [*c]const u8) [*c]FILE;
@@ -406,135 +431,579 @@ pub extern fn _spawnvp(_Mode: c_int, _Filename: [*c]const u8, _ArgList: [*c]cons
 pub extern fn _spawnvpe(_Mode: c_int, _Filename: [*c]const u8, _ArgList: [*c]const [*c]const u8, _Env: [*c]const [*c]const u8) isize;
 pub extern fn clearerr_s(_File: [*c]FILE) errno_t;
 pub extern fn fread_s(_DstBuf: ?*anyopaque, _DstSize: usize, _ElementSize: usize, _Count: usize, _File: [*c]FILE) usize;
-pub extern fn fprintf_s(_File: [*c]FILE, _Format: [*c]const u8, ...) c_int;
-pub extern fn _fscanf_s_l(_File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
-pub extern fn fscanf_s(_File: [*c]FILE, _Format: [*c]const u8, ...) c_int;
-pub extern fn printf_s(_Format: [*c]const u8, ...) c_int;
-pub extern fn _scanf_l(_Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
-pub extern fn _scanf_s_l(_Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub extern fn __stdio_common_vsprintf_s(_Options: c_ulonglong, _Str: [*c]u8, _Len: usize, _Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn __stdio_common_vsprintf_p(_Options: c_ulonglong, _Str: [*c]u8, _Len: usize, _Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn __stdio_common_vsnprintf_s(_Options: c_ulonglong, _Str: [*c]u8, _Len: usize, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn __stdio_common_vfprintf_s(_Options: c_ulonglong, _File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn __stdio_common_vfprintf_p(_Options: c_ulonglong, _File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub fn _vfscanf_s_l(arg__File: [*c]FILE, arg__Format: [*c]const u8, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _File = arg__File;
+    _ = &_File;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vfscanf(@as(c_ulonglong, 1), _File, _Format, _Locale, _ArgList);
+}
+pub fn vfscanf_s(arg__File: [*c]FILE, arg__Format: [*c]const u8, arg__ArgList: va_list) callconv(.C) c_int {
+    var _File = arg__File;
+    _ = &_File;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vfscanf_s_l(_File, _Format, null, _ArgList);
+}
+pub fn _vscanf_s_l(arg__Format: [*c]const u8, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vfscanf_s_l(__acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 0)))), _Format, _Locale, _ArgList);
+}
+pub fn vscanf_s(arg__Format: [*c]const u8, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vfscanf_s_l(__acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 0)))), _Format, null, _ArgList);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:60:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _fscanf_s_l(_File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:70:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn fscanf_s(_File: [*c]FILE, _Format: [*c]const u8, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:80:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _scanf_s_l(_Format: [*c]const u8, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:90:27: warning: TODO unable to translate variadic function, demoted to extern
 pub extern fn scanf_s(_Format: [*c]const u8, ...) c_int;
-pub extern fn _snprintf_c(_DstBuf: [*c]u8, _MaxCount: usize, _Format: [*c]const u8, ...) c_int;
-pub extern fn _vsnprintf_c(_DstBuf: [*c]u8, _MaxCount: usize, _Format: [*c]const u8, _ArgList: va_list) c_int;
-pub extern fn _fscanf_l(_File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
-pub extern fn _sscanf_l(_Src: [*c]const u8, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
-pub extern fn _sscanf_s_l(_Src: [*c]const u8, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub fn _vfscanf_l(arg__File: [*c]FILE, arg__Format: [*c]const u8, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _File = arg__File;
+    _ = &_File;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vfscanf(@as(c_ulonglong, @bitCast(@as(c_longlong, @as(c_int, 0)))), _File, _Format, _Locale, _ArgList);
+}
+pub fn _vscanf_l(arg__Format: [*c]const u8, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vfscanf_l(__acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 0)))), _Format, _Locale, _ArgList);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:110:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _fscanf_l(_File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:119:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _scanf_l(_Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub fn _vsscanf_s_l(arg__Src: [*c]const u8, arg__Format: [*c]const u8, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Src = arg__Src;
+    _ = &_Src;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vsscanf(@as(c_ulonglong, 1), _Src, @as(usize, @bitCast(@as(c_longlong, -@as(c_int, 1)))), _Format, _Locale, _ArgList);
+}
+pub fn vsscanf_s(arg__Src: [*c]const u8, arg__Format: [*c]const u8, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Src = arg__Src;
+    _ = &_Src;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vsscanf_s_l(_Src, _Format, null, _ArgList);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:137:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _sscanf_s_l(_Src: [*c]const u8, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:146:27: warning: TODO unable to translate variadic function, demoted to extern
 pub extern fn sscanf_s(_Src: [*c]const u8, _Format: [*c]const u8, ...) c_int;
-pub extern fn _snscanf_s(_Src: [*c]const u8, _MaxCount: usize, _Format: [*c]const u8, ...) c_int;
+pub fn _vsscanf_l(arg__Src: [*c]const u8, arg__Format: [*c]const u8, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Src = arg__Src;
+    _ = &_Src;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vsscanf(@as(c_ulonglong, @bitCast(@as(c_longlong, @as(c_int, 0)))), _Src, @as(usize, @bitCast(@as(c_longlong, -@as(c_int, 1)))), _Format, _Locale, _ArgList);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:160:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _sscanf_l(_Src: [*c]const u8, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:171:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _snscanf_s_l(_Src: [*c]const u8, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:180:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _snscanf_s(_Src: [*c]const u8, _MaxCount: usize, _Format: [*c]const u8, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:191:27: warning: TODO unable to translate variadic function, demoted to extern
 pub extern fn _snscanf_l(_Src: [*c]const u8, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
-pub extern fn _snscanf_s_l(_Src: [*c]const u8, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
-pub extern fn vfprintf_s(_File: [*c]FILE, _Format: [*c]const u8, _ArgList: va_list) c_int;
-pub extern fn vprintf_s(_Format: [*c]const u8, _ArgList: va_list) c_int;
-pub extern fn vsnprintf_s(_DstBuf: [*c]u8, _DstSize: usize, _MaxCount: usize, _Format: [*c]const u8, _ArgList: va_list) c_int;
-pub extern fn _vsnprintf_s(_DstBuf: [*c]u8, _DstSize: usize, _MaxCount: usize, _Format: [*c]const u8, _ArgList: va_list) c_int;
-pub extern fn vsprintf_s(_DstBuf: [*c]u8, _Size: usize, _Format: [*c]const u8, _ArgList: va_list) c_int;
-pub extern fn sprintf_s(_DstBuf: [*c]u8, _DstSize: usize, _Format: [*c]const u8, ...) c_int;
+pub fn _vfprintf_s_l(arg__File: [*c]FILE, arg__Format: [*c]const u8, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _File = arg__File;
+    _ = &_File;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vfprintf_s(@as(c_ulonglong, @bitCast(@as(c_longlong, @as(c_int, 0)))), _File, _Format, _Locale, _ArgList);
+}
+pub fn vfprintf_s(arg__File: [*c]FILE, arg__Format: [*c]const u8, arg__ArgList: va_list) callconv(.C) c_int {
+    var _File = arg__File;
+    _ = &_File;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vfprintf_s_l(_File, _Format, null, _ArgList);
+}
+pub fn _vprintf_s_l(arg__Format: [*c]const u8, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vfprintf_s_l(__acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 1)))), _Format, _Locale, _ArgList);
+}
+pub fn vprintf_s(arg__Format: [*c]const u8, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vfprintf_s_l(__acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 1)))), _Format, null, _ArgList);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:218:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _fprintf_s_l(_File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:227:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _printf_s_l(_Format: [*c]const u8, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:236:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn fprintf_s(_File: [*c]FILE, _Format: [*c]const u8, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:245:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn printf_s(_Format: [*c]const u8, ...) c_int;
+pub fn _vsnprintf_c_l(arg__DstBuf: [*c]u8, arg__MaxCount: usize, arg__Format: [*c]const u8, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _DstBuf = arg__DstBuf;
+    _ = &_DstBuf;
+    var _MaxCount = arg__MaxCount;
+    _ = &_MaxCount;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vsprintf(@as(c_ulonglong, @bitCast(@as(c_longlong, @as(c_int, 0)))), _DstBuf, _MaxCount, _Format, _Locale, _ArgList);
+}
+pub fn _vsnprintf_c(arg__DstBuf: [*c]u8, arg__MaxCount: usize, arg__Format: [*c]const u8, arg__ArgList: va_list) callconv(.C) c_int {
+    var _DstBuf = arg__DstBuf;
+    _ = &_DstBuf;
+    var _MaxCount = arg__MaxCount;
+    _ = &_MaxCount;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vsnprintf_c_l(_DstBuf, _MaxCount, _Format, null, _ArgList);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:263:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _snprintf_c_l(_DstBuf: [*c]u8, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:272:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _snprintf_c(_DstBuf: [*c]u8, _MaxCount: usize, _Format: [*c]const u8, ...) c_int;
+pub fn _vsnprintf_s_l(arg__DstBuf: [*c]u8, arg__DstSize: usize, arg__MaxCount: usize, arg__Format: [*c]const u8, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _DstBuf = arg__DstBuf;
+    _ = &_DstBuf;
+    var _DstSize = arg__DstSize;
+    _ = &_DstSize;
+    var _MaxCount = arg__MaxCount;
+    _ = &_MaxCount;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vsnprintf_s(@as(c_ulonglong, @bitCast(@as(c_longlong, @as(c_int, 0)))), _DstBuf, _DstSize, _MaxCount, _Format, _Locale, _ArgList);
+}
+pub fn vsnprintf_s(arg__DstBuf: [*c]u8, arg__DstSize: usize, arg__MaxCount: usize, arg__Format: [*c]const u8, arg__ArgList: va_list) callconv(.C) c_int {
+    var _DstBuf = arg__DstBuf;
+    _ = &_DstBuf;
+    var _DstSize = arg__DstSize;
+    _ = &_DstSize;
+    var _MaxCount = arg__MaxCount;
+    _ = &_MaxCount;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vsnprintf_s_l(_DstBuf, _DstSize, _MaxCount, _Format, null, _ArgList);
+}
+pub fn _vsnprintf_s(arg__DstBuf: [*c]u8, arg__DstSize: usize, arg__MaxCount: usize, arg__Format: [*c]const u8, arg__ArgList: va_list) callconv(.C) c_int {
+    var _DstBuf = arg__DstBuf;
+    _ = &_DstBuf;
+    var _DstSize = arg__DstSize;
+    _ = &_DstSize;
+    var _MaxCount = arg__MaxCount;
+    _ = &_MaxCount;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vsnprintf_s_l(_DstBuf, _DstSize, _MaxCount, _Format, null, _ArgList);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:294:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _snprintf_s_l(_DstBuf: [*c]u8, _DstSize: usize, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:303:27: warning: TODO unable to translate variadic function, demoted to extern
 pub extern fn _snprintf_s(_DstBuf: [*c]u8, _DstSize: usize, _MaxCount: usize, _Format: [*c]const u8, ...) c_int;
-pub extern fn _fprintf_p(_File: [*c]FILE, _Format: [*c]const u8, ...) c_int;
+pub fn _vsprintf_s_l(arg__DstBuf: [*c]u8, arg__DstSize: usize, arg__Format: [*c]const u8, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _DstBuf = arg__DstBuf;
+    _ = &_DstBuf;
+    var _DstSize = arg__DstSize;
+    _ = &_DstSize;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vsprintf_s(@as(c_ulonglong, @bitCast(@as(c_longlong, @as(c_int, 0)))), _DstBuf, _DstSize, _Format, _Locale, _ArgList);
+}
+pub fn vsprintf_s(arg__DstBuf: [*c]u8, arg__Size: usize, arg__Format: [*c]const u8, arg__ArgList: va_list) callconv(.C) c_int {
+    var _DstBuf = arg__DstBuf;
+    _ = &_DstBuf;
+    var _Size = arg__Size;
+    _ = &_Size;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vsprintf_s_l(_DstBuf, _Size, _Format, null, _ArgList);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:321:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _sprintf_s_l(_DstBuf: [*c]u8, _DstSize: usize, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:330:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn sprintf_s(_DstBuf: [*c]u8, _DstSize: usize, _Format: [*c]const u8, ...) c_int;
+pub fn _vfprintf_p_l(arg__File: [*c]FILE, arg__Format: [*c]const u8, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _File = arg__File;
+    _ = &_File;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vfprintf_p(@as(c_ulonglong, @bitCast(@as(c_longlong, @as(c_int, 0)))), _File, _Format, _Locale, _ArgList);
+}
+pub fn _vfprintf_p(arg__File: [*c]FILE, arg__Format: [*c]const u8, arg__ArgList: va_list) callconv(.C) c_int {
+    var _File = arg__File;
+    _ = &_File;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vfprintf_p_l(_File, _Format, null, _ArgList);
+}
+pub fn _vprintf_p_l(arg__Format: [*c]const u8, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vfprintf_p_l(__acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 1)))), _Format, _Locale, _ArgList);
+}
+pub fn _vprintf_p(arg__Format: [*c]const u8, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vfprintf_p_l(__acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 1)))), _Format, null, _ArgList);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:356:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _fprintf_p_l(_File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:365:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _fprintf_p(_File: [*c]FILE, _Format: [*c]const u8, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:374:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _printf_p_l(_Format: [*c]const u8, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:383:27: warning: TODO unable to translate variadic function, demoted to extern
 pub extern fn _printf_p(_Format: [*c]const u8, ...) c_int;
+pub fn _vsprintf_p_l(arg__DstBuf: [*c]u8, arg__MaxCount: usize, arg__Format: [*c]const u8, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _DstBuf = arg__DstBuf;
+    _ = &_DstBuf;
+    var _MaxCount = arg__MaxCount;
+    _ = &_MaxCount;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vsprintf_p(@as(c_ulonglong, @bitCast(@as(c_longlong, @as(c_int, 0)))), _DstBuf, _MaxCount, _Format, _Locale, _ArgList);
+}
+pub fn _vsprintf_p(arg__Dst: [*c]u8, arg__MaxCount: usize, arg__Format: [*c]const u8, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Dst = arg__Dst;
+    _ = &_Dst;
+    var _MaxCount = arg__MaxCount;
+    _ = &_MaxCount;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vsprintf_p_l(_Dst, _MaxCount, _Format, null, _ArgList);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:401:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _sprintf_p_l(_DstBuf: [*c]u8, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:410:27: warning: TODO unable to translate variadic function, demoted to extern
 pub extern fn _sprintf_p(_Dst: [*c]u8, _MaxCount: usize, _Format: [*c]const u8, ...) c_int;
-pub extern fn _vfprintf_p(_File: [*c]FILE, _Format: [*c]const u8, _ArgList: va_list) c_int;
-pub extern fn _vprintf_p(_Format: [*c]const u8, _ArgList: va_list) c_int;
-pub extern fn _vsprintf_p(_Dst: [*c]u8, _MaxCount: usize, _Format: [*c]const u8, _ArgList: va_list) c_int;
+pub fn _vscprintf_p_l(arg__Format: [*c]const u8, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vsprintf_p(@as(c_ulonglong, 2), null, @as(usize, @bitCast(@as(c_longlong, @as(c_int, 0)))), _Format, _Locale, _ArgList);
+}
+pub fn _vscprintf_p(arg__Format: [*c]const u8, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vscprintf_p_l(_Format, null, _ArgList);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:428:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _scprintf_p_l(_Format: [*c]const u8, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:437:27: warning: TODO unable to translate variadic function, demoted to extern
 pub extern fn _scprintf_p(_Format: [*c]const u8, ...) c_int;
-pub extern fn _vscprintf_p(_Format: [*c]const u8, _ArgList: va_list) c_int;
+pub fn _vfprintf_l(arg__File: [*c]FILE, arg__Format: [*c]const u8, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _File = arg__File;
+    _ = &_File;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vfprintf(@as(c_ulonglong, @bitCast(@as(c_longlong, @as(c_int, 0)))), _File, _Format, _Locale, _ArgList);
+}
+pub fn _vprintf_l(arg__Format: [*c]const u8, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vfprintf_l(__acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 1)))), _Format, _Locale, _ArgList);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:455:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _fprintf_l(_File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:464:27: warning: TODO unable to translate variadic function, demoted to extern
 pub extern fn _printf_l(_Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
-pub extern fn _printf_p_l(_Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
-pub extern fn _vprintf_l(_Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _vprintf_p_l(_Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _fprintf_l(_File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
-pub extern fn _fprintf_p_l(_File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
-pub extern fn _vfprintf_l(_File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _vfprintf_p_l(_File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _sprintf_l(_DstBuf: [*c]u8, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
-pub extern fn _sprintf_p_l(_DstBuf: [*c]u8, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
-pub extern fn _vsprintf_l(_DstBuf: [*c]u8, _Format: [*c]const u8, _locale_t, _ArgList: va_list) c_int;
-pub extern fn _vsprintf_p_l(_DstBuf: [*c]u8, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _scprintf_l(_Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
-pub extern fn _scprintf_p_l(_Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
-pub extern fn _vscprintf_l(_Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _vscprintf_p_l(_Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _printf_s_l(_Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
-pub extern fn _vprintf_s_l(_Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _fprintf_s_l(_File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
-pub extern fn _vfprintf_s_l(_File: [*c]FILE, _Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _sprintf_s_l(_DstBuf: [*c]u8, _DstSize: usize, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
-pub extern fn _vsprintf_s_l(_DstBuf: [*c]u8, _DstSize: usize, _Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _snprintf_s_l(_DstBuf: [*c]u8, _DstSize: usize, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
-pub extern fn _vsnprintf_s_l(_DstBuf: [*c]u8, _DstSize: usize, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub fn _vsnprintf_l(arg__DstBuf: [*c]u8, arg__MaxCount: usize, arg__Format: [*c]const u8, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _DstBuf = arg__DstBuf;
+    _ = &_DstBuf;
+    var _MaxCount = arg__MaxCount;
+    _ = &_MaxCount;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vsprintf(@as(c_ulonglong, 1), _DstBuf, _MaxCount, _Format, _Locale, _ArgList);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:478:27: warning: TODO unable to translate variadic function, demoted to extern
 pub extern fn _snprintf_l(_DstBuf: [*c]u8, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
-pub extern fn _snprintf_c_l(_DstBuf: [*c]u8, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
-pub extern fn _vsnprintf_l(_DstBuf: [*c]u8, _MaxCount: usize, _Format: [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _vsnprintf_c_l(_DstBuf: [*c]u8, _MaxCount: usize, [*c]const u8, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub fn _vsprintf_l(arg__DstBuf: [*c]u8, arg__Format: [*c]const u8, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _DstBuf = arg__DstBuf;
+    _ = &_DstBuf;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vsnprintf_l(_DstBuf, @as(usize, @bitCast(@as(c_longlong, -@as(c_int, 1)))), _Format, _Locale, _ArgList);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:491:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _sprintf_l(_DstBuf: [*c]u8, _Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
+pub fn _vscprintf_l(arg__Format: [*c]const u8, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vsprintf(@as(c_ulonglong, 2), null, @as(usize, @bitCast(@as(c_longlong, @as(c_int, 0)))), _Format, _Locale, _ArgList);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:505:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _scprintf_l(_Format: [*c]const u8, _Locale: _locale_t, ...) c_int;
 pub extern fn fopen_s(_File: [*c][*c]FILE, _Filename: [*c]const u8, _Mode: [*c]const u8) errno_t;
 pub extern fn freopen_s(_File: [*c][*c]FILE, _Filename: [*c]const u8, _Mode: [*c]const u8, _Stream: [*c]FILE) errno_t;
 pub extern fn gets_s([*c]u8, rsize_t) [*c]u8;
+pub extern fn tmpfile_s(_File: [*c][*c]FILE) errno_t;
 pub extern fn tmpnam_s([*c]u8, rsize_t) errno_t;
 pub extern fn _getws_s(_Str: [*c]wchar_t, _SizeInWords: usize) [*c]wchar_t;
-pub extern fn fwprintf_s(_File: [*c]FILE, _Format: [*c]const wchar_t, ...) c_int;
-pub extern fn wprintf_s(_Format: [*c]const wchar_t, ...) c_int;
-pub extern fn vfwprintf_s(_File: [*c]FILE, _Format: [*c]const wchar_t, _ArgList: va_list) c_int;
-pub extern fn vwprintf_s(_Format: [*c]const wchar_t, _ArgList: va_list) c_int;
-pub extern fn vswprintf_s(_Dst: [*c]wchar_t, _SizeInWords: usize, _Format: [*c]const wchar_t, _ArgList: va_list) c_int;
-pub extern fn swprintf_s(_Dst: [*c]wchar_t, _SizeInWords: usize, _Format: [*c]const wchar_t, ...) c_int;
-pub extern fn _vsnwprintf_s(_DstBuf: [*c]wchar_t, _DstSizeInWords: usize, _MaxCount: usize, _Format: [*c]const wchar_t, _ArgList: va_list) c_int;
-pub extern fn _snwprintf_s(_DstBuf: [*c]wchar_t, _DstSizeInWords: usize, _MaxCount: usize, _Format: [*c]const wchar_t, ...) c_int;
-pub extern fn _wprintf_s_l(_Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
-pub extern fn _vwprintf_s_l(_Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _fwprintf_s_l(_File: [*c]FILE, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
-pub extern fn _vfwprintf_s_l(_File: [*c]FILE, _Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _swprintf_s_l(_DstBuf: [*c]wchar_t, _DstSize: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
-pub extern fn _vswprintf_s_l(_DstBuf: [*c]wchar_t, _DstSize: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _snwprintf_s_l(_DstBuf: [*c]wchar_t, _DstSize: usize, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
-pub extern fn _vsnwprintf_s_l(_DstBuf: [*c]wchar_t, _DstSize: usize, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _fwscanf_s_l(_File: [*c]FILE, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
-pub extern fn fwscanf_s(_File: [*c]FILE, _Format: [*c]const wchar_t, ...) c_int;
-pub extern fn _swscanf_s_l(_Src: [*c]const wchar_t, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
-pub extern fn swscanf_s(_Src: [*c]const wchar_t, _Format: [*c]const wchar_t, ...) c_int;
-pub extern fn _snwscanf_s(_Src: [*c]const wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, ...) c_int;
-pub extern fn _snwscanf_s_l(_Src: [*c]const wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
-pub extern fn _wscanf_s_l(_Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn __stdio_common_vswprintf_s(_Options: c_ulonglong, _Str: [*c]wchar_t, _Len: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn __stdio_common_vsnwprintf_s(_Options: c_ulonglong, _Str: [*c]wchar_t, _Len: usize, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub extern fn __stdio_common_vfwprintf_s(_Options: c_ulonglong, _File: [*c]FILE, _Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
+pub fn _vfwscanf_s_l(arg__File: [*c]FILE, arg__Format: [*c]const wchar_t, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _File = arg__File;
+    _ = &_File;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vfwscanf(@as(c_ulonglong, 2) | @as(c_ulonglong, 1), _File, _Format, _Locale, _ArgList);
+}
+pub fn vfwscanf_s(arg__File: [*c]FILE, arg__Format: [*c]const wchar_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _File = arg__File;
+    _ = &_File;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vfwscanf_s_l(_File, _Format, null, _ArgList);
+}
+pub fn _vwscanf_s_l(arg__Format: [*c]const wchar_t, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vfwscanf_s_l(__acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 0)))), _Format, _Locale, _ArgList);
+}
+pub fn vwscanf_s(arg__Format: [*c]const wchar_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vfwscanf_s_l(__acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 0)))), _Format, null, _ArgList);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:631:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _fwscanf_s_l(_File: [*c]FILE, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:641:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn fwscanf_s(_File: [*c]FILE, _Format: [*c]const wchar_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:651:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _wscanf_s_l(_Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:661:27: warning: TODO unable to translate variadic function, demoted to extern
 pub extern fn wscanf_s(_Format: [*c]const wchar_t, ...) c_int;
+pub fn _vswscanf_s_l(arg__Src: [*c]const wchar_t, arg__Format: [*c]const wchar_t, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Src = arg__Src;
+    _ = &_Src;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vswscanf(@as(c_ulonglong, 2) | @as(c_ulonglong, 1), _Src, @as(usize, @bitCast(@as(c_longlong, -@as(c_int, 1)))), _Format, _Locale, _ArgList);
+}
+pub fn vswscanf_s(arg__Src: [*c]const wchar_t, arg__Format: [*c]const wchar_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Src = arg__Src;
+    _ = &_Src;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vswscanf_s_l(_Src, _Format, null, _ArgList);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:681:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _swscanf_s_l(_Src: [*c]const wchar_t, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:690:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn swscanf_s(_Src: [*c]const wchar_t, _Format: [*c]const wchar_t, ...) c_int;
+pub fn _vsnwscanf_s_l(arg__Src: [*c]const wchar_t, arg__MaxCount: usize, arg__Format: [*c]const wchar_t, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Src = arg__Src;
+    _ = &_Src;
+    var _MaxCount = arg__MaxCount;
+    _ = &_MaxCount;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vswscanf(@as(c_ulonglong, 2) | @as(c_ulonglong, 1), _Src, _MaxCount, _Format, _Locale, _ArgList);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:704:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _snwscanf_s_l(_Src: [*c]const wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:713:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _snwscanf_s(_Src: [*c]const wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, ...) c_int;
+pub fn _vfwprintf_s_l(arg__File: [*c]FILE, arg__Format: [*c]const wchar_t, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _File = arg__File;
+    _ = &_File;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vfwprintf_s(@as(c_ulonglong, 4), _File, _Format, _Locale, _ArgList);
+}
+pub fn _vwprintf_s_l(arg__Format: [*c]const wchar_t, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vfwprintf_s_l(__acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 1)))), _Format, _Locale, _ArgList);
+}
+pub fn vfwprintf_s(arg__File: [*c]FILE, arg__Format: [*c]const wchar_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _File = arg__File;
+    _ = &_File;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vfwprintf_s_l(_File, _Format, null, _ArgList);
+}
+pub fn vwprintf_s(arg__Format: [*c]const wchar_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vfwprintf_s_l(__acrt_iob_func(@as(c_uint, @bitCast(@as(c_int, 1)))), _Format, null, _ArgList);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:739:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _fwprintf_s_l(_File: [*c]FILE, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:748:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _wprintf_s_l(_Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:757:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn fwprintf_s(_File: [*c]FILE, _Format: [*c]const wchar_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:766:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn wprintf_s(_Format: [*c]const wchar_t, ...) c_int;
+pub fn _vswprintf_s_l(arg__DstBuf: [*c]wchar_t, arg__DstSize: usize, arg__Format: [*c]const wchar_t, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _DstBuf = arg__DstBuf;
+    _ = &_DstBuf;
+    var _DstSize = arg__DstSize;
+    _ = &_DstSize;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vswprintf_s(@as(c_ulonglong, 4), _DstBuf, _DstSize, _Format, _Locale, _ArgList);
+}
+pub fn vswprintf_s(arg__DstBuf: [*c]wchar_t, arg__DstSize: usize, arg__Format: [*c]const wchar_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _DstBuf = arg__DstBuf;
+    _ = &_DstBuf;
+    var _DstSize = arg__DstSize;
+    _ = &_DstSize;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vswprintf_s_l(_DstBuf, _DstSize, _Format, null, _ArgList);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:784:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _swprintf_s_l(_DstBuf: [*c]wchar_t, _DstSize: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:793:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn swprintf_s(_DstBuf: [*c]wchar_t, _DstSize: usize, _Format: [*c]const wchar_t, ...) c_int;
+pub fn _vsnwprintf_s_l(arg__DstBuf: [*c]wchar_t, arg__DstSize: usize, arg__MaxCount: usize, arg__Format: [*c]const wchar_t, arg__Locale: _locale_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _DstBuf = arg__DstBuf;
+    _ = &_DstBuf;
+    var _DstSize = arg__DstSize;
+    _ = &_DstSize;
+    var _MaxCount = arg__MaxCount;
+    _ = &_MaxCount;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _Locale = arg__Locale;
+    _ = &_Locale;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return __stdio_common_vsnwprintf_s(@as(c_ulonglong, 4), _DstBuf, _DstSize, _MaxCount, _Format, _Locale, _ArgList);
+}
+pub fn _vsnwprintf_s(arg__DstBuf: [*c]wchar_t, arg__DstSize: usize, arg__MaxCount: usize, arg__Format: [*c]const wchar_t, arg__ArgList: va_list) callconv(.C) c_int {
+    var _DstBuf = arg__DstBuf;
+    _ = &_DstBuf;
+    var _DstSize = arg__DstSize;
+    _ = &_DstSize;
+    var _MaxCount = arg__MaxCount;
+    _ = &_MaxCount;
+    var _Format = arg__Format;
+    _ = &_Format;
+    var _ArgList = arg__ArgList;
+    _ = &_ArgList;
+    return _vsnwprintf_s_l(_DstBuf, _DstSize, _MaxCount, _Format, null, _ArgList);
+} // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:811:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _snwprintf_s_l(_DstBuf: [*c]wchar_t, _DstSize: usize, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int; // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:820:27: warning: TODO unable to translate variadic function, demoted to extern
+pub extern fn _snwprintf_s(_DstBuf: [*c]wchar_t, _DstSize: usize, _MaxCount: usize, _Format: [*c]const wchar_t, ...) c_int;
 pub extern fn _wfopen_s(_File: [*c][*c]FILE, _Filename: [*c]const wchar_t, _Mode: [*c]const wchar_t) errno_t;
 pub extern fn _wfreopen_s(_File: [*c][*c]FILE, _Filename: [*c]const wchar_t, _Mode: [*c]const wchar_t, _OldFile: [*c]FILE) errno_t;
 pub extern fn _wtmpnam_s(_DstBuf: [*c]wchar_t, _SizeInWords: usize) errno_t;
-pub extern fn _fwprintf_p(_File: [*c]FILE, _Format: [*c]const wchar_t, ...) c_int;
-pub extern fn _wprintf_p(_Format: [*c]const wchar_t, ...) c_int;
-pub extern fn _vfwprintf_p(_File: [*c]FILE, _Format: [*c]const wchar_t, _ArgList: va_list) c_int;
-pub extern fn _vwprintf_p(_Format: [*c]const wchar_t, _ArgList: va_list) c_int;
-pub extern fn _swprintf_p(_DstBuf: [*c]wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, ...) c_int;
-pub extern fn _vswprintf_p(_DstBuf: [*c]wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, _ArgList: va_list) c_int;
-pub extern fn _scwprintf_p(_Format: [*c]const wchar_t, ...) c_int;
-pub extern fn _vscwprintf_p(_Format: [*c]const wchar_t, _ArgList: va_list) c_int;
-pub extern fn _wprintf_l(_Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
-pub extern fn _wprintf_p_l(_Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
-pub extern fn _vwprintf_l(_Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _vwprintf_p_l(_Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _fwprintf_l(_File: [*c]FILE, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
-pub extern fn _fwprintf_p_l(_File: [*c]FILE, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
-pub extern fn _vfwprintf_l(_File: [*c]FILE, _Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _vfwprintf_p_l(_File: [*c]FILE, _Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _swprintf_c_l(_DstBuf: [*c]wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
-pub extern fn _swprintf_p_l(_DstBuf: [*c]wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
-pub extern fn _vswprintf_c_l(_DstBuf: [*c]wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _vswprintf_p_l(_DstBuf: [*c]wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _scwprintf_l(_Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
-pub extern fn _scwprintf_p_l(_Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
-pub extern fn _vscwprintf_p_l(_Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _snwprintf_l(_DstBuf: [*c]wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
-pub extern fn _vsnwprintf_l(_DstBuf: [*c]wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn __swprintf_l(_Dest: [*c]wchar_t, _Format: [*c]const wchar_t, _Plocinfo: _locale_t, ...) c_int;
-pub extern fn __vswprintf_l(_Dest: [*c]wchar_t, _Format: [*c]const wchar_t, _Plocinfo: _locale_t, _Args: va_list) c_int;
-pub extern fn _vscwprintf_l(_Format: [*c]const wchar_t, _Locale: _locale_t, _ArgList: va_list) c_int;
-pub extern fn _fwscanf_l(_File: [*c]FILE, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
-pub extern fn _swscanf_l(_Src: [*c]const wchar_t, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
-pub extern fn _snwscanf_l(_Src: [*c]const wchar_t, _MaxCount: usize, _Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
-pub extern fn _wscanf_l(_Format: [*c]const wchar_t, _Locale: _locale_t, ...) c_int;
+pub extern fn _fread_nolock_s(_DstBuf: ?*anyopaque, _DstSize: usize, _ElementSize: usize, _Count: usize, _File: [*c]FILE) usize;
 pub const STBI_default: c_int = 0;
 pub const STBI_grey: c_int = 1;
 pub const STBI_grey_alpha: c_int = 2;
 pub const STBI_rgb: c_int = 3;
 pub const STBI_rgb_alpha: c_int = 4;
-const enum_unnamed_2 = c_uint;
+const enum_unnamed_1 = c_uint;
 pub extern fn _itow_s(_Val: c_int, _DstBuf: [*c]wchar_t, _SizeInWords: usize, _Radix: c_int) errno_t;
 pub extern fn _ltow_s(_Val: c_long, _DstBuf: [*c]wchar_t, _SizeInWords: usize, _Radix: c_int) errno_t;
 pub extern fn _ultow_s(_Val: c_ulong, _DstBuf: [*c]wchar_t, _SizeInWords: usize, _Radix: c_int) errno_t;
@@ -548,31 +1017,30 @@ pub extern fn _wsearchenv_s(_Filename: [*c]const wchar_t, _EnvVar: [*c]const wch
 pub extern fn _wsplitpath_s(_FullPath: [*c]const wchar_t, _Drive: [*c]wchar_t, _DriveSizeInWords: usize, _Dir: [*c]wchar_t, _DirSizeInWords: usize, _Filename: [*c]wchar_t, _FilenameSizeInWords: usize, _Ext: [*c]wchar_t, _ExtSizeInWords: usize) errno_t;
 pub const _onexit_t = ?*const fn () callconv(.C) c_int;
 pub const struct__div_t = extern struct {
-    quot: c_int,
-    rem: c_int,
+    quot: c_int = @import("std").mem.zeroes(c_int),
+    rem: c_int = @import("std").mem.zeroes(c_int),
 };
 pub const div_t = struct__div_t;
 pub const struct__ldiv_t = extern struct {
-    quot: c_long,
-    rem: c_long,
+    quot: c_long = @import("std").mem.zeroes(c_long),
+    rem: c_long = @import("std").mem.zeroes(c_long),
 };
 pub const ldiv_t = struct__ldiv_t;
 pub const _LDOUBLE = extern struct {
-    ld: [10]u8,
+    ld: [10]u8 = @import("std").mem.zeroes([10]u8),
 };
 pub const _CRT_DOUBLE = extern struct {
-    x: f64,
+    x: f64 = @import("std").mem.zeroes(f64),
 };
 pub const _CRT_FLOAT = extern struct {
-    f: f32,
+    f: f32 = @import("std").mem.zeroes(f32),
 };
 pub const _LONGDOUBLE = extern struct {
-    x: c_longdouble,
+    x: c_longdouble = @import("std").mem.zeroes(c_longdouble),
 };
 pub const _LDBL12 = extern struct {
-    ld12: [12]u8,
+    ld12: [12]u8 = @import("std").mem.zeroes([12]u8),
 };
-pub extern var __imp___mb_cur_max: [*c]c_int;
 pub extern fn ___mb_cur_max_func() c_int;
 pub const _purecall_handler = ?*const fn () callconv(.C) void;
 pub extern fn _set_purecall_handler(_Handler: _purecall_handler) _purecall_handler;
@@ -586,26 +1054,20 @@ pub extern fn _get_errno(_Value: [*c]c_int) errno_t;
 pub extern fn __doserrno() [*c]c_ulong;
 pub extern fn _set_doserrno(_Value: c_ulong) errno_t;
 pub extern fn _get_doserrno(_Value: [*c]c_ulong) errno_t;
-pub extern var _sys_errlist: [1][*c]u8;
-pub extern var _sys_nerr: c_int;
+pub extern fn __sys_errlist() [*c][*c]u8;
+pub extern fn __sys_nerr() [*c]c_int;
 pub extern fn __p___argv() [*c][*c][*c]u8;
 pub extern fn __p__fmode() [*c]c_int;
+pub extern fn __p___argc() [*c]c_int;
+pub extern fn __p___wargv() [*c][*c][*c]wchar_t;
+pub extern fn __p__environ() [*c][*c][*c]u8;
+pub extern fn __p__wenviron() [*c][*c][*c]wchar_t;
+pub extern fn __p__pgmptr() [*c][*c]u8;
+pub extern fn __p__wpgmptr() [*c][*c]wchar_t;
 pub extern fn _get_pgmptr(_Value: [*c][*c]u8) errno_t;
 pub extern fn _get_wpgmptr(_Value: [*c][*c]wchar_t) errno_t;
 pub extern fn _set_fmode(_Mode: c_int) errno_t;
 pub extern fn _get_fmode(_PMode: [*c]c_int) errno_t;
-pub extern var __imp___argc: [*c]c_int;
-pub extern var __imp___argv: [*c][*c][*c]u8;
-pub extern var __imp___wargv: [*c][*c][*c]wchar_t;
-pub extern var __imp__environ: [*c][*c][*c]u8;
-pub extern var __imp__wenviron: [*c][*c][*c]wchar_t;
-pub extern var __imp__pgmptr: [*c][*c]u8;
-pub extern var __imp__wpgmptr: [*c][*c]wchar_t;
-pub extern var __imp__osplatform: [*c]c_uint;
-pub extern var __imp__osver: [*c]c_uint;
-pub extern var __imp__winver: [*c]c_uint;
-pub extern var __imp__winmajor: [*c]c_uint;
-pub extern var __imp__winminor: [*c]c_uint;
 pub extern fn _get_osplatform(_Value: [*c]c_uint) errno_t;
 pub extern fn _get_osver(_Value: [*c]c_uint) errno_t;
 pub extern fn _get_winver(_Value: [*c]c_uint) errno_t;
@@ -613,14 +1075,19 @@ pub extern fn _get_winmajor(_Value: [*c]c_uint) errno_t;
 pub extern fn _get_winminor(_Value: [*c]c_uint) errno_t;
 pub extern fn exit(_Code: c_int) noreturn;
 pub extern fn _exit(_Code: c_int) noreturn;
+pub extern fn quick_exit(_Code: c_int) noreturn;
 pub extern fn _Exit(c_int) noreturn;
 pub extern fn abort() noreturn;
 pub extern fn _set_abort_behavior(_Flags: c_uint, _Mask: c_uint) c_uint;
 pub extern fn abs(_X: c_int) c_int;
-pub extern fn labs(_X: c_long) c_long; // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdlib.h:421:12: warning: TODO implement function '__builtin_llabs' in std.zig.c_builtins
-// C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdlib.h:420:41: warning: unable to translate function, demoted to extern
-pub extern fn _abs64(arg_x: c_longlong) c_longlong;
+pub extern fn labs(_X: c_long) c_long;
+pub inline fn _abs64(arg_x: c_longlong) c_longlong {
+    var x = arg_x;
+    _ = &x;
+    return __builtin_llabs(x);
+}
 pub extern fn atexit(?*const fn () callconv(.C) void) c_int;
+pub extern fn at_quick_exit(?*const fn () callconv(.C) void) c_int;
 pub extern fn atof(_String: [*c]const u8) f64;
 pub extern fn _atof_l(_String: [*c]const u8, _Locale: _locale_t) f64;
 pub extern fn atoi(_Str: [*c]const u8) c_int;
@@ -659,21 +1126,14 @@ pub extern fn mkstemp(template_name: [*c]u8) c_int;
 pub extern fn rand() c_int;
 pub extern fn _set_error_mode(_Mode: c_int) c_int;
 pub extern fn srand(_Seed: c_uint) void;
-pub extern fn __mingw_strtod(noalias [*c]const u8, noalias [*c][*c]u8) f64;
-pub fn strtod(noalias arg__Str: [*c]const u8, noalias arg__EndPtr: [*c][*c]u8) callconv(.C) f64 {
-    var _Str = arg__Str;
-    var _EndPtr = arg__EndPtr;
-    return __mingw_strtod(_Str, _EndPtr);
-}
-pub extern fn __mingw_strtof(noalias [*c]const u8, noalias [*c][*c]u8) f32;
-pub fn strtof(noalias arg__Str: [*c]const u8, noalias arg__EndPtr: [*c][*c]u8) callconv(.C) f32 {
-    var _Str = arg__Str;
-    var _EndPtr = arg__EndPtr;
-    return __mingw_strtof(_Str, _EndPtr);
-}
+pub extern fn strtod(_Str: [*c]const u8, _EndPtr: [*c][*c]u8) f64;
+pub extern fn strtof(nptr: [*c]const u8, endptr: [*c][*c]u8) f32;
 pub extern fn strtold([*c]const u8, [*c][*c]u8) c_longdouble;
 pub extern fn __strtod(noalias [*c]const u8, noalias [*c][*c]u8) f64;
+pub extern fn __mingw_strtof(noalias [*c]const u8, noalias [*c][*c]u8) f32;
+pub extern fn __mingw_strtod(noalias [*c]const u8, noalias [*c][*c]u8) f64;
 pub extern fn __mingw_strtold(noalias [*c]const u8, noalias [*c][*c]u8) c_longdouble;
+pub extern fn _strtof_l(noalias _Str: [*c]const u8, noalias _EndPtr: [*c][*c]u8, _Locale: _locale_t) f32;
 pub extern fn _strtod_l(noalias _Str: [*c]const u8, noalias _EndPtr: [*c][*c]u8, _Locale: _locale_t) f64;
 pub extern fn strtol(_Str: [*c]const u8, _EndPtr: [*c][*c]u8, _Radix: c_int) c_long;
 pub extern fn _strtol_l(noalias _Str: [*c]const u8, noalias _EndPtr: [*c][*c]u8, _Radix: c_int, _Locale: _locale_t) c_long;
@@ -689,32 +1149,26 @@ pub extern fn calloc(_NumOfElements: c_ulonglong, _SizeOfElements: c_ulonglong) 
 pub extern fn free(_Memory: ?*anyopaque) void;
 pub extern fn malloc(_Size: c_ulonglong) ?*anyopaque;
 pub extern fn realloc(_Memory: ?*anyopaque, _NewSize: c_ulonglong) ?*anyopaque;
-pub extern fn _recalloc(_Memory: ?*anyopaque, _Count: usize, _Size: usize) ?*anyopaque;
 pub extern fn _aligned_free(_Memory: ?*anyopaque) void;
 pub extern fn _aligned_malloc(_Size: usize, _Alignment: usize) ?*anyopaque;
 pub extern fn _aligned_offset_malloc(_Size: usize, _Alignment: usize, _Offset: usize) ?*anyopaque;
 pub extern fn _aligned_realloc(_Memory: ?*anyopaque, _Size: usize, _Alignment: usize) ?*anyopaque;
-pub extern fn _aligned_recalloc(_Memory: ?*anyopaque, _Count: usize, _Size: usize, _Alignment: usize) ?*anyopaque;
 pub extern fn _aligned_offset_realloc(_Memory: ?*anyopaque, _Size: usize, _Alignment: usize, _Offset: usize) ?*anyopaque;
+pub extern fn _recalloc(_Memory: ?*anyopaque, _Count: usize, _Size: usize) ?*anyopaque;
+pub extern fn _aligned_recalloc(_Memory: ?*anyopaque, _Count: usize, _Size: usize, _Alignment: usize) ?*anyopaque;
 pub extern fn _aligned_offset_recalloc(_Memory: ?*anyopaque, _Count: usize, _Size: usize, _Alignment: usize, _Offset: usize) ?*anyopaque;
+pub extern fn _aligned_msize(_Memory: ?*anyopaque, _Alignment: usize, _Offset: usize) usize;
 pub extern fn _itow(_Value: c_int, _Dest: [*c]wchar_t, _Radix: c_int) [*c]wchar_t;
 pub extern fn _ltow(_Value: c_long, _Dest: [*c]wchar_t, _Radix: c_int) [*c]wchar_t;
 pub extern fn _ultow(_Value: c_ulong, _Dest: [*c]wchar_t, _Radix: c_int) [*c]wchar_t;
 pub extern fn __mingw_wcstod(noalias _Str: [*c]const wchar_t, noalias _EndPtr: [*c][*c]wchar_t) f64;
 pub extern fn __mingw_wcstof(noalias nptr: [*c]const wchar_t, noalias endptr: [*c][*c]wchar_t) f32;
 pub extern fn __mingw_wcstold(noalias [*c]const wchar_t, noalias [*c][*c]wchar_t) c_longdouble;
-pub fn wcstod(noalias arg__Str: [*c]const wchar_t, noalias arg__EndPtr: [*c][*c]wchar_t) callconv(.C) f64 {
-    var _Str = arg__Str;
-    var _EndPtr = arg__EndPtr;
-    return __mingw_wcstod(_Str, _EndPtr);
-}
-pub fn wcstof(noalias arg__Str: [*c]const wchar_t, noalias arg__EndPtr: [*c][*c]wchar_t) callconv(.C) f32 {
-    var _Str = arg__Str;
-    var _EndPtr = arg__EndPtr;
-    return __mingw_wcstof(_Str, _EndPtr);
-}
+pub extern fn wcstod(noalias _Str: [*c]const wchar_t, noalias _EndPtr: [*c][*c]wchar_t) f64;
+pub extern fn wcstof(noalias nptr: [*c]const wchar_t, noalias endptr: [*c][*c]wchar_t) f32;
 pub extern fn wcstold(noalias [*c]const wchar_t, noalias [*c][*c]wchar_t) c_longdouble;
 pub extern fn _wcstod_l(noalias _Str: [*c]const wchar_t, noalias _EndPtr: [*c][*c]wchar_t, _Locale: _locale_t) f64;
+pub extern fn _wcstof_l(noalias _Str: [*c]const wchar_t, noalias _EndPtr: [*c][*c]wchar_t, _Locale: _locale_t) f32;
 pub extern fn wcstol(noalias _Str: [*c]const wchar_t, noalias _EndPtr: [*c][*c]wchar_t, _Radix: c_int) c_long;
 pub extern fn _wcstol_l(noalias _Str: [*c]const wchar_t, noalias _EndPtr: [*c][*c]wchar_t, _Radix: c_int, _Locale: _locale_t) c_long;
 pub extern fn wcstoul(noalias _Str: [*c]const wchar_t, noalias _EndPtr: [*c][*c]wchar_t, _Radix: c_int) c_ulong;
@@ -762,9 +1216,9 @@ pub extern fn _wfullpath(_FullPath: [*c]wchar_t, _Path: [*c]const wchar_t, _Size
 pub extern fn _wmakepath(_ResultPath: [*c]wchar_t, _Drive: [*c]const wchar_t, _Dir: [*c]const wchar_t, _Filename: [*c]const wchar_t, _Ext: [*c]const wchar_t) void;
 pub extern fn _wsearchenv(_Filename: [*c]const wchar_t, _EnvVar: [*c]const wchar_t, _ResultPath: [*c]wchar_t) void;
 pub extern fn _wsplitpath(_FullPath: [*c]const wchar_t, _Drive: [*c]wchar_t, _Dir: [*c]wchar_t, _Filename: [*c]wchar_t, _Ext: [*c]wchar_t) void;
-pub const _beep = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdlib.h:681:24
-pub const _seterrormode = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdlib.h:683:24
-pub const _sleep = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdlib.h:684:24
+pub const _beep = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdlib.h:686:24
+pub const _seterrormode = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdlib.h:688:24
+pub const _sleep = @compileError("unable to resolve function type clang.TypeClass.MacroQualified"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdlib.h:689:24
 pub extern fn ecvt(_Val: f64, _NumOfDigits: c_int, _PtDec: [*c]c_int, _PtSign: [*c]c_int) [*c]u8;
 pub extern fn fcvt(_Val: f64, _NumOfDec: c_int, _PtDec: [*c]c_int, _PtSign: [*c]c_int) [*c]u8;
 pub extern fn gcvt(_Val: f64, _NumOfDigits: c_int, _DstBuf: [*c]u8) [*c]u8;
@@ -775,8 +1229,8 @@ pub extern fn swab(_Buf1: [*c]u8, _Buf2: [*c]u8, _SizeInBytes: c_int) void;
 pub extern fn ultoa(_Val: c_ulong, _Dstbuf: [*c]u8, _Radix: c_int) [*c]u8;
 pub extern fn onexit(_Func: _onexit_t) _onexit_t;
 pub const lldiv_t = extern struct {
-    quot: c_longlong,
-    rem: c_longlong,
+    quot: c_longlong = @import("std").mem.zeroes(c_longlong),
+    rem: c_longlong = @import("std").mem.zeroes(c_longlong),
 };
 pub extern fn lldiv(c_longlong, c_longlong) lldiv_t;
 pub extern fn llabs(c_longlong) c_longlong;
@@ -811,9 +1265,9 @@ pub extern fn _searchenv_s(_Filename: [*c]const u8, _EnvVar: [*c]const u8, _Resu
 pub extern fn _splitpath_s(_FullPath: [*c]const u8, _Drive: [*c]u8, _DriveSize: usize, _Dir: [*c]u8, _DirSize: usize, _Filename: [*c]u8, _FilenameSize: usize, _Ext: [*c]u8, _ExtSize: usize) errno_t;
 pub extern fn qsort_s(_Base: ?*anyopaque, _NumOfElements: usize, _SizeOfElements: usize, _PtFuncCompare: ?*const fn (?*anyopaque, ?*const anyopaque, ?*const anyopaque) callconv(.C) c_int, _Context: ?*anyopaque) void;
 pub const struct__heapinfo = extern struct {
-    _pentry: [*c]c_int,
-    _size: usize,
-    _useflag: c_int,
+    _pentry: [*c]c_int = @import("std").mem.zeroes([*c]c_int),
+    _size: usize = @import("std").mem.zeroes(usize),
+    _useflag: c_int = @import("std").mem.zeroes(c_int),
 };
 pub const _HEAPINFO = struct__heapinfo;
 pub extern var _amblksiz: c_uint;
@@ -823,7 +1277,9 @@ pub extern fn __mingw_aligned_offset_realloc(_Memory: ?*anyopaque, _Size: usize,
 pub extern fn __mingw_aligned_realloc(_Memory: ?*anyopaque, _Size: usize, _Offset: usize) ?*anyopaque;
 pub inline fn _mm_malloc(arg___size: usize, arg___align: usize) ?*anyopaque {
     var __size = arg___size;
+    _ = &__size;
     var __align = arg___align;
+    _ = &__align;
     if (__align == @as(usize, @bitCast(@as(c_longlong, @as(c_int, 1))))) {
         return malloc(__size);
     }
@@ -831,11 +1287,13 @@ pub inline fn _mm_malloc(arg___size: usize, arg___align: usize) ?*anyopaque {
         __align = @sizeOf(?*anyopaque);
     }
     var __mallocedMemory: ?*anyopaque = undefined;
+    _ = &__mallocedMemory;
     __mallocedMemory = __mingw_aligned_malloc(__size, __align);
     return __mallocedMemory;
 }
 pub inline fn _mm_free(arg___p: ?*anyopaque) void {
     var __p = arg___p;
+    _ = &__p;
     __mingw_aligned_free(__p);
 }
 pub extern fn _resetstkoflw() c_int;
@@ -855,7 +1313,9 @@ pub extern fn _heapused(_Used: [*c]usize, _Commit: [*c]usize) usize;
 pub extern fn _get_heap_handle() isize;
 pub fn _MarkAllocaS(arg__Ptr: ?*anyopaque, arg__Marker: c_uint) callconv(.C) ?*anyopaque {
     var _Ptr = arg__Ptr;
+    _ = &_Ptr;
     var _Marker = arg__Marker;
+    _ = &_Marker;
     if (_Ptr != null) {
         @as([*c]c_uint, @ptrCast(@alignCast(_Ptr))).* = _Marker;
         _Ptr = @as(?*anyopaque, @ptrCast(@as([*c]u8, @ptrCast(@alignCast(_Ptr))) + @as(usize, @bitCast(@as(isize, @intCast(@as(c_int, 16)))))));
@@ -864,7 +1324,9 @@ pub fn _MarkAllocaS(arg__Ptr: ?*anyopaque, arg__Marker: c_uint) callconv(.C) ?*a
 }
 pub fn _freea(arg__Memory: ?*anyopaque) callconv(.C) void {
     var _Memory = arg__Memory;
+    _ = &_Memory;
     var _Marker: c_uint = undefined;
+    _ = &_Marker;
     if (_Memory != null) {
         _Memory = @as(?*anyopaque, @ptrCast(@as([*c]u8, @ptrCast(@alignCast(_Memory))) - @as(usize, @bitCast(@as(isize, @intCast(@as(c_int, 16)))))));
         _Marker = @as([*c]c_uint, @ptrCast(@alignCast(_Memory))).*;
@@ -876,9 +1338,9 @@ pub fn _freea(arg__Memory: ?*anyopaque) callconv(.C) void {
 pub const stbi_uc = u8;
 pub const stbi_us = c_ushort;
 pub const stbi_io_callbacks = extern struct {
-    read: ?*const fn (?*anyopaque, [*c]u8, c_int) callconv(.C) c_int,
-    skip: ?*const fn (?*anyopaque, c_int) callconv(.C) void,
-    eof: ?*const fn (?*anyopaque) callconv(.C) c_int,
+    read: ?*const fn (?*anyopaque, [*c]u8, c_int) callconv(.C) c_int = @import("std").mem.zeroes(?*const fn (?*anyopaque, [*c]u8, c_int) callconv(.C) c_int),
+    skip: ?*const fn (?*anyopaque, c_int) callconv(.C) void = @import("std").mem.zeroes(?*const fn (?*anyopaque, c_int) callconv(.C) void),
+    eof: ?*const fn (?*anyopaque) callconv(.C) c_int = @import("std").mem.zeroes(?*const fn (?*anyopaque) callconv(.C) c_int),
 };
 pub extern fn stbi_load_from_memory(buffer: [*c]const stbi_uc, len: c_int, x: [*c]c_int, y: [*c]c_int, channels_in_file: [*c]c_int, desired_channels: c_int) [*c]stbi_uc;
 pub extern fn stbi_load_from_callbacks(clbk: [*c]const stbi_io_callbacks, user: ?*anyopaque, x: [*c]c_int, y: [*c]c_int, channels_in_file: [*c]c_int, desired_channels: c_int) [*c]stbi_uc;
@@ -914,6 +1376,8 @@ pub extern fn stbi_is_16_bit_from_file(f: [*c]FILE) c_int;
 pub extern fn stbi_set_unpremultiply_on_load(flag_true_if_should_unpremultiply: c_int) void;
 pub extern fn stbi_convert_iphone_png_to_rgb(flag_true_if_should_convert: c_int) void;
 pub extern fn stbi_set_flip_vertically_on_load(flag_true_if_should_flip: c_int) void;
+pub extern fn stbi_set_unpremultiply_on_load_thread(flag_true_if_should_unpremultiply: c_int) void;
+pub extern fn stbi_convert_iphone_png_to_rgb_thread(flag_true_if_should_convert: c_int) void;
 pub extern fn stbi_set_flip_vertically_on_load_thread(flag_true_if_should_flip: c_int) void;
 pub extern fn stbi_zlib_decode_malloc_guesssize(buffer: [*c]const u8, len: c_int, initial_size: c_int, outlen: [*c]c_int) [*c]u8;
 pub extern fn stbi_zlib_decode_malloc_guesssize_headerflag(buffer: [*c]const u8, len: c_int, initial_size: c_int, outlen: [*c]c_int, parse_header: c_int) [*c]u8;
@@ -921,121 +1385,115 @@ pub extern fn stbi_zlib_decode_malloc(buffer: [*c]const u8, len: c_int, outlen: 
 pub extern fn stbi_zlib_decode_buffer(obuffer: [*c]u8, olen: c_int, ibuffer: [*c]const u8, ilen: c_int) c_int;
 pub extern fn stbi_zlib_decode_noheader_malloc(buffer: [*c]const u8, len: c_int, outlen: [*c]c_int) [*c]u8;
 pub extern fn stbi_zlib_decode_noheader_buffer(obuffer: [*c]u8, olen: c_int, ibuffer: [*c]const u8, ilen: c_int) c_int;
-pub const __INTMAX_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `LL`"); // (no file):79:9
-pub const __UINTMAX_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `ULL`"); // (no file):85:9
-pub const __FLT16_DENORM_MIN__ = @compileError("unable to translate C expr: unexpected token 'IntegerLiteral'"); // (no file):108:9
-pub const __FLT16_EPSILON__ = @compileError("unable to translate C expr: unexpected token 'IntegerLiteral'"); // (no file):112:9
-pub const __FLT16_MAX__ = @compileError("unable to translate C expr: unexpected token 'IntegerLiteral'"); // (no file):118:9
-pub const __FLT16_MIN__ = @compileError("unable to translate C expr: unexpected token 'IntegerLiteral'"); // (no file):121:9
-pub const __INT64_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `LL`"); // (no file):183:9
-pub const __UINT32_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `U`"); // (no file):205:9
-pub const __UINT64_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `ULL`"); // (no file):213:9
-pub const __seg_gs = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // (no file):342:9
-pub const __seg_fs = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // (no file):343:9
-pub const __declspec = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // (no file):427:9
-pub const _cdecl = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // (no file):428:9
-pub const __cdecl = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // (no file):429:9
-pub const _stdcall = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // (no file):430:9
-pub const __stdcall = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // (no file):431:9
-pub const _fastcall = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // (no file):432:9
-pub const __fastcall = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // (no file):433:9
-pub const _thiscall = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // (no file):434:9
-pub const __thiscall = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // (no file):435:9
-pub const _pascal = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // (no file):436:9
-pub const __pascal = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // (no file):437:9
-pub const __STRINGIFY = @compileError("unable to translate C expr: unexpected token '#'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw_mac.h:10:9
-pub const __MINGW64_VERSION_STR = @compileError("unable to translate C expr: unexpected token 'StringLiteral'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw_mac.h:26:9
-pub const __MINGW_IMP_SYMBOL = @compileError("unable to translate macro: undefined identifier `__imp_`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw_mac.h:119:11
-pub const __MINGW_IMP_LSYMBOL = @compileError("unable to translate macro: undefined identifier `__imp_`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw_mac.h:120:11
-pub const __MINGW_LSYMBOL = @compileError("unable to translate C expr: unexpected token '##'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw_mac.h:122:11
-pub const __MINGW_ASM_CALL = @compileError("unable to translate macro: undefined identifier `__asm__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw_mac.h:130:9
-pub const __MINGW_ASM_CRT_CALL = @compileError("unable to translate macro: undefined identifier `__asm__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw_mac.h:131:9
-pub const __MINGW_EXTENSION = @compileError("unable to translate macro: undefined identifier `__extension__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw_mac.h:163:13
-pub const __MINGW_POISON_NAME = @compileError("unable to translate macro: undefined identifier `_layout_has_not_been_verified_and_its_declaration_is_most_likely_incorrect`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw_mac.h:203:11
-pub const __MINGW_ATTRIB_DEPRECATED_STR = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw_mac.h:247:11
-pub const __MINGW_MS_PRINTF = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw_mac.h:270:9
-pub const __MINGW_MS_SCANF = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw_mac.h:273:9
-pub const __MINGW_GNU_PRINTF = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw_mac.h:276:9
-pub const __MINGW_GNU_SCANF = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw_mac.h:279:9
-pub const __mingw_ovr = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw_mac.h:289:11
-pub const __MINGW_SELECTANY = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw_mac.h:304:9
-pub const __MINGW_CRT_NAME_CONCAT2 = @compileError("unable to translate macro: undefined identifier `_s`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw_secapi.h:41:9
-pub const __CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES_MEMORY_0_3_ = @compileError("unable to translate C expr: unexpected token 'Identifier'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw_secapi.h:69:9
-pub const __MINGW_IMPORT = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:51:12
-pub const _CRTIMP = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:59:15
-pub const _inline = @compileError("unable to translate macro: undefined identifier `__inline`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:81:9
-pub const __CRT_INLINE = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:90:11
-pub const __MINGW_INTRIN_INLINE = @compileError("unable to translate macro: undefined identifier `__inline__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:97:9
-pub const __UNUSED_PARAM = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:111:11
-pub const __restrict_arr = @compileError("unable to translate macro: undefined identifier `__restrict`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:126:10
-pub const __MINGW_ATTRIB_NORETURN = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:142:9
-pub const __MINGW_ATTRIB_CONST = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:143:9
-pub const __MINGW_ATTRIB_MALLOC = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:153:9
-pub const __MINGW_ATTRIB_PURE = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:154:9
-pub const __MINGW_ATTRIB_NONNULL = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:167:9
-pub const __MINGW_ATTRIB_UNUSED = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:173:9
-pub const __MINGW_ATTRIB_USED = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:179:9
-pub const __MINGW_ATTRIB_DEPRECATED = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:180:9
-pub const __MINGW_ATTRIB_DEPRECATED_MSG = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:182:9
-pub const __MINGW_NOTHROW = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:197:9
-pub const __MINGW_PRAGMA_PARAM = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:215:9
-pub const __MINGW_BROKEN_INTERFACE = @compileError("unable to translate macro: undefined identifier `message`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:218:9
-pub const __forceinline = @compileError("unable to translate macro: undefined identifier `__inline__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:273:9
-pub const _crt_va_start = @compileError("unable to translate macro: undefined identifier `__builtin_va_start`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/vadefs.h:48:9
-pub const _crt_va_arg = @compileError("unable to translate macro: undefined identifier `__builtin_va_arg`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/vadefs.h:49:9
-pub const _crt_va_end = @compileError("unable to translate macro: undefined identifier `__builtin_va_end`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/vadefs.h:50:9
-pub const _crt_va_copy = @compileError("unable to translate macro: undefined identifier `__builtin_va_copy`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/vadefs.h:51:9
-pub const __CRT_STRINGIZE = @compileError("unable to translate C expr: unexpected token '#'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:292:9
-pub const __CRT_WIDE = @compileError("unable to translate macro: undefined identifier `L`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:297:9
-pub const _CRT_DEPRECATE_TEXT = @compileError("unable to translate macro: undefined identifier `deprecated`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:356:9
-pub const _CRT_INSECURE_DEPRECATE_MEMORY = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:359:9
-pub const _CRT_INSECURE_DEPRECATE_GLOBALS = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:363:9
-pub const _CRT_OBSOLETE = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:371:9
-pub const _CRT_ALIGN = @compileError("unable to translate macro: undefined identifier `__attribute__`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:398:9
-pub const _CRT_glob = @compileError("unable to translate macro: undefined identifier `_dowildcard`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:462:9
-pub const _UNION_NAME = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:482:9
-pub const _STRUCT_NAME = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:483:9
-pub const __CRT_UUID_DECL = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/_mingw.h:570:9
-pub const _CRT_SECURE_CPP_NOTHROW = @compileError("unable to translate macro: undefined identifier `throw`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:143:9
-pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_0 = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:262:9
-pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_1 = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:263:9
-pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_2 = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:264:9
-pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_3 = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:265:9
-pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_4 = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:266:9
-pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_1_1 = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:267:9
-pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_1_2 = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:268:9
-pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_1_3 = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:269:9
-pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_2_0 = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:270:9
-pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_1_ARGLIST = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:271:9
-pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_2_ARGLIST = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:272:9
-pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_SPLITPATH = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:273:9
-pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_0 = @compileError("unable to translate macro: undefined identifier `__func_name`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:277:9
-pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_1 = @compileError("unable to translate macro: undefined identifier `__func_name`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:279:9
-pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_2 = @compileError("unable to translate macro: undefined identifier `__func_name`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:281:9
-pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_3 = @compileError("unable to translate macro: undefined identifier `__func_name`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:283:9
-pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_4 = @compileError("unable to translate macro: undefined identifier `__func_name`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:285:9
-pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_0_EX = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:422:9
-pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_1_EX = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:423:9
-pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_2_EX = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:424:9
-pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_3_EX = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:425:9
-pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_4_EX = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:426:9
-pub const __crt_typefix = @compileError("unable to translate C expr: unexpected token 'Eof'"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/corecrt.h:486:9
-pub const _fgetc_nolock = @compileError("TODO unary inc/dec expr"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:1446:9
-pub const _fputc_nolock = @compileError("TODO unary inc/dec expr"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:1447:9
-pub const _getwchar_nolock = @compileError("unable to translate macro: undefined identifier `_getwc_nolock`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:1453:9
-pub const _putwchar_nolock = @compileError("unable to translate macro: undefined identifier `_putwc_nolock`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdio.h:1454:9
-pub const _SECIMP = @compileError("unable to translate macro: undefined identifier `dllimport`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/sec_api/stdio_s.h:16:9
-pub const _countof = @compileError("unable to translate C expr: expected ')' instead got '['"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/stdlib.h:377:9
-pub const _STATIC_ASSERT = @compileError("unable to translate macro: undefined identifier `__static_assert_t`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/malloc.h:27:9
-pub const _alloca = @compileError("unable to translate macro: undefined identifier `__builtin_alloca`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/malloc.h:93:9
-pub const alloca = @compileError("unable to translate macro: undefined identifier `__builtin_alloca`"); // C:\Program Files\zig\zig-windows-x86_64-0.11.0\lib\libc\include\any-windows-any/malloc.h:159:9
-pub const STBIDEF = @compileError("unable to translate C expr: unexpected token 'extern'"); // lib\stb\src\stb_image.h:351:9
+pub const __INTMAX_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `LL`"); // (no file):89:9
+pub const __UINTMAX_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `ULL`"); // (no file):95:9
+pub const __INT64_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `LL`"); // (no file):193:9
+pub const __UINT32_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `U`"); // (no file):215:9
+pub const __UINT64_C_SUFFIX__ = @compileError("unable to translate macro: undefined identifier `ULL`"); // (no file):223:9
+pub const __seg_gs = @compileError("unable to translate macro: undefined identifier `address_space`"); // (no file):352:9
+pub const __seg_fs = @compileError("unable to translate macro: undefined identifier `address_space`"); // (no file):353:9
+pub const __declspec = @compileError("unable to translate C expr: unexpected token '__attribute__'"); // (no file):437:9
+pub const _cdecl = @compileError("unable to translate macro: undefined identifier `__cdecl__`"); // (no file):438:9
+pub const __cdecl = @compileError("unable to translate macro: undefined identifier `__cdecl__`"); // (no file):439:9
+pub const _stdcall = @compileError("unable to translate macro: undefined identifier `__stdcall__`"); // (no file):440:9
+pub const __stdcall = @compileError("unable to translate macro: undefined identifier `__stdcall__`"); // (no file):441:9
+pub const _fastcall = @compileError("unable to translate macro: undefined identifier `__fastcall__`"); // (no file):442:9
+pub const __fastcall = @compileError("unable to translate macro: undefined identifier `__fastcall__`"); // (no file):443:9
+pub const _thiscall = @compileError("unable to translate macro: undefined identifier `__thiscall__`"); // (no file):444:9
+pub const __thiscall = @compileError("unable to translate macro: undefined identifier `__thiscall__`"); // (no file):445:9
+pub const _pascal = @compileError("unable to translate macro: undefined identifier `__pascal__`"); // (no file):446:9
+pub const __pascal = @compileError("unable to translate macro: undefined identifier `__pascal__`"); // (no file):447:9
+pub const __STRINGIFY = @compileError("unable to translate C expr: unexpected token '#'"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw_mac.h:10:9
+pub const __MINGW64_VERSION_STR = @compileError("unable to translate C expr: unexpected token 'a string literal'"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw_mac.h:26:9
+pub const __MINGW_IMP_SYMBOL = @compileError("unable to translate macro: undefined identifier `__imp_`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw_mac.h:119:11
+pub const __MINGW_IMP_LSYMBOL = @compileError("unable to translate macro: undefined identifier `__imp_`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw_mac.h:120:11
+pub const __MINGW_LSYMBOL = @compileError("unable to translate C expr: unexpected token '##'"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw_mac.h:122:11
+pub const __MINGW_ASM_CALL = @compileError("unable to translate C expr: unexpected token '__asm__'"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw_mac.h:130:9
+pub const __MINGW_ASM_CRT_CALL = @compileError("unable to translate C expr: unexpected token '__asm__'"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw_mac.h:131:9
+pub const __MINGW_EXTENSION = @compileError("unable to translate C expr: unexpected token '__extension__'"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw_mac.h:163:13
+pub const __MINGW_POISON_NAME = @compileError("unable to translate macro: undefined identifier `_layout_has_not_been_verified_and_its_declaration_is_most_likely_incorrect`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw_mac.h:203:11
+pub const __MINGW_ATTRIB_DEPRECATED_STR = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw_mac.h:247:11
+pub const __MINGW_MS_PRINTF = @compileError("unable to translate macro: undefined identifier `__format__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw_mac.h:270:9
+pub const __MINGW_MS_SCANF = @compileError("unable to translate macro: undefined identifier `__format__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw_mac.h:273:9
+pub const __MINGW_GNU_PRINTF = @compileError("unable to translate macro: undefined identifier `__format__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw_mac.h:276:9
+pub const __MINGW_GNU_SCANF = @compileError("unable to translate macro: undefined identifier `__format__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw_mac.h:279:9
+pub const __mingw_ovr = @compileError("unable to translate macro: undefined identifier `__unused__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw_mac.h:289:11
+pub const __mingw_attribute_artificial = @compileError("unable to translate macro: undefined identifier `__artificial__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw_mac.h:298:11
+pub const __MINGW_SELECTANY = @compileError("unable to translate macro: undefined identifier `__selectany__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw_mac.h:304:9
+pub const __MINGW_CRT_NAME_CONCAT2 = @compileError("unable to translate macro: undefined identifier `_s`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw_secapi.h:41:9
+pub const __CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES_MEMORY_0_3_ = @compileError("unable to translate C expr: unexpected token 'an identifier'"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw_secapi.h:69:9
+pub const __MINGW_IMPORT = @compileError("unable to translate macro: undefined identifier `__dllimport__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:44:12
+pub const _CRTIMP = @compileError("unable to translate macro: undefined identifier `__dllimport__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:52:15
+pub const _inline = @compileError("unable to translate C expr: unexpected token '__inline'"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:74:9
+pub const __CRT_INLINE = @compileError("unable to translate macro: undefined identifier `__gnu_inline__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:83:11
+pub const __MINGW_INTRIN_INLINE = @compileError("unable to translate macro: undefined identifier `__always_inline__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:90:9
+pub const __UNUSED_PARAM = @compileError("unable to translate macro: undefined identifier `__unused__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:104:11
+pub const __restrict_arr = @compileError("unable to translate C expr: unexpected token '__restrict'"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:119:10
+pub const __MINGW_ATTRIB_NORETURN = @compileError("unable to translate macro: undefined identifier `__noreturn__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:135:9
+pub const __MINGW_ATTRIB_CONST = @compileError("unable to translate C expr: unexpected token '__attribute__'"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:136:9
+pub const __MINGW_ATTRIB_MALLOC = @compileError("unable to translate macro: undefined identifier `__malloc__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:146:9
+pub const __MINGW_ATTRIB_PURE = @compileError("unable to translate macro: undefined identifier `__pure__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:147:9
+pub const __MINGW_ATTRIB_NONNULL = @compileError("unable to translate macro: undefined identifier `__nonnull__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:160:9
+pub const __MINGW_ATTRIB_UNUSED = @compileError("unable to translate macro: undefined identifier `__unused__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:166:9
+pub const __MINGW_ATTRIB_USED = @compileError("unable to translate macro: undefined identifier `__used__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:172:9
+pub const __MINGW_ATTRIB_DEPRECATED = @compileError("unable to translate macro: undefined identifier `__deprecated__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:173:9
+pub const __MINGW_ATTRIB_DEPRECATED_MSG = @compileError("unable to translate macro: undefined identifier `__deprecated__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:175:9
+pub const __MINGW_NOTHROW = @compileError("unable to translate macro: undefined identifier `__nothrow__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:190:9
+pub const __MINGW_PRAGMA_PARAM = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:208:9
+pub const __MINGW_BROKEN_INTERFACE = @compileError("unable to translate macro: undefined identifier `message`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:211:9
+pub const __forceinline = @compileError("unable to translate macro: undefined identifier `__always_inline__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:266:9
+pub const _crt_va_start = @compileError("unable to translate macro: undefined identifier `__builtin_va_start`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/vadefs.h:48:9
+pub const _crt_va_arg = @compileError("unable to translate C expr: unexpected token 'an identifier'"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/vadefs.h:49:9
+pub const _crt_va_end = @compileError("unable to translate macro: undefined identifier `__builtin_va_end`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/vadefs.h:50:9
+pub const _crt_va_copy = @compileError("unable to translate macro: undefined identifier `__builtin_va_copy`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/vadefs.h:51:9
+pub const __CRT_STRINGIZE = @compileError("unable to translate C expr: unexpected token '#'"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:285:9
+pub const __CRT_WIDE = @compileError("unable to translate macro: undefined identifier `L`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:290:9
+pub const _CRT_DEPRECATE_TEXT = @compileError("unable to translate macro: undefined identifier `deprecated`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:349:9
+pub const _CRT_INSECURE_DEPRECATE_MEMORY = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:352:9
+pub const _CRT_INSECURE_DEPRECATE_GLOBALS = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:356:9
+pub const _CRT_OBSOLETE = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:364:9
+pub const _CRT_ALIGN = @compileError("unable to translate macro: undefined identifier `__aligned__`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:391:9
+pub const _CRT_glob = @compileError("unable to translate macro: undefined identifier `_dowildcard`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:455:9
+pub const _UNION_NAME = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:475:9
+pub const _STRUCT_NAME = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:476:9
+pub const __CRT_UUID_DECL = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:563:9
+pub const __MINGW_PREFETCH_IMPL = @compileError("unable to translate macro: undefined identifier `__prefetch`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/_mingw.h:620:9
+pub const _CRT_SECURE_CPP_NOTHROW = @compileError("unable to translate macro: undefined identifier `throw`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:143:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_0 = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:262:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_1 = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:263:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_2 = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:264:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_3 = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:265:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_4 = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:266:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_1_1 = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:267:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_1_2 = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:268:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_1_3 = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:269:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_2_0 = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:270:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_1_ARGLIST = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:271:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_2_ARGLIST = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:272:9
+pub const __DEFINE_CPP_OVERLOAD_SECURE_FUNC_SPLITPATH = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:273:9
+pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_0 = @compileError("unable to translate macro: undefined identifier `__func_name`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:277:9
+pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_1 = @compileError("unable to translate macro: undefined identifier `__func_name`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:279:9
+pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_2 = @compileError("unable to translate macro: undefined identifier `__func_name`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:281:9
+pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_3 = @compileError("unable to translate macro: undefined identifier `__func_name`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:283:9
+pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_4 = @compileError("unable to translate macro: undefined identifier `__func_name`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:285:9
+pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_0_EX = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:422:9
+pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_1_EX = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:423:9
+pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_2_EX = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:424:9
+pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_3_EX = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:425:9
+pub const __DEFINE_CPP_OVERLOAD_STANDARD_FUNC_0_4_EX = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:426:9
+pub const __crt_typefix = @compileError("unable to translate C expr: unexpected token ''"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/corecrt.h:486:9
+pub const _SECIMP = @compileError("unable to translate macro: undefined identifier `dllimport`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/sec_api/stdio_s.h:16:9
+pub const _countof = @compileError("unable to translate C expr: expected ')' instead got '['"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/stdlib.h:377:9
+pub const _STATIC_ASSERT = @compileError("unable to translate macro: undefined identifier `__static_assert_t`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/malloc.h:27:9
+pub const _alloca = @compileError("unable to translate macro: undefined identifier `__builtin_alloca`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/malloc.h:98:9
+pub const alloca = @compileError("unable to translate macro: undefined identifier `__builtin_alloca`"); // C:\Program Files\zig\zig-windows-x86_64-0.12.0-dev.3180+83e578a18\lib\libc\include\any-windows-any/malloc.h:164:9
+pub const STBIDEF = @compileError("unable to translate C expr: unexpected token 'extern'"); // c\stb_image.h:397:9
 pub const __llvm__ = @as(c_int, 1);
 pub const __clang__ = @as(c_int, 1);
-pub const __clang_major__ = @as(c_int, 16);
+pub const __clang_major__ = @as(c_int, 17);
 pub const __clang_minor__ = @as(c_int, 0);
 pub const __clang_patchlevel__ = @as(c_int, 6);
-pub const __clang_version__ = "16.0.6 (https://github.com/ziglang/zig-bootstrap 1dda86241204c4649f668d46b6a37feed707c7b4)";
+pub const __clang_version__ = "17.0.6 (https://github.com/ziglang/zig-bootstrap 4c78aa1bba84dbd324e178932cd52221417f63da)";
 pub const __GNUC__ = @as(c_int, 4);
 pub const __GNUC_MINOR__ = @as(c_int, 2);
 pub const __GNUC_PATCHLEVEL__ = @as(c_int, 1);
@@ -1051,8 +1509,18 @@ pub const __OPENCL_MEMORY_SCOPE_WORK_GROUP = @as(c_int, 1);
 pub const __OPENCL_MEMORY_SCOPE_DEVICE = @as(c_int, 2);
 pub const __OPENCL_MEMORY_SCOPE_ALL_SVM_DEVICES = @as(c_int, 3);
 pub const __OPENCL_MEMORY_SCOPE_SUB_GROUP = @as(c_int, 4);
+pub const __FPCLASS_SNAN = @as(c_int, 0x0001);
+pub const __FPCLASS_QNAN = @as(c_int, 0x0002);
+pub const __FPCLASS_NEGINF = @as(c_int, 0x0004);
+pub const __FPCLASS_NEGNORMAL = @as(c_int, 0x0008);
+pub const __FPCLASS_NEGSUBNORMAL = @as(c_int, 0x0010);
+pub const __FPCLASS_NEGZERO = @as(c_int, 0x0020);
+pub const __FPCLASS_POSZERO = @as(c_int, 0x0040);
+pub const __FPCLASS_POSSUBNORMAL = @as(c_int, 0x0080);
+pub const __FPCLASS_POSNORMAL = @as(c_int, 0x0100);
+pub const __FPCLASS_POSINF = @as(c_int, 0x0200);
 pub const __PRAGMA_REDEFINE_EXTNAME = @as(c_int, 1);
-pub const __VERSION__ = "Clang 16.0.6 (https://github.com/ziglang/zig-bootstrap 1dda86241204c4649f668d46b6a37feed707c7b4)";
+pub const __VERSION__ = "Clang 17.0.6 (https://github.com/ziglang/zig-bootstrap 4c78aa1bba84dbd324e178932cd52221417f63da)";
 pub const __OBJC_BOOL_IS_BOOL = @as(c_int, 0);
 pub const __CONSTANT_CFSTRINGS__ = @as(c_int, 1);
 pub const __SEH__ = @as(c_int, 1);
@@ -1134,16 +1602,20 @@ pub const __UINTPTR_FMTo__ = "llo";
 pub const __UINTPTR_FMTu__ = "llu";
 pub const __UINTPTR_FMTx__ = "llx";
 pub const __UINTPTR_FMTX__ = "llX";
+pub const __FLT16_DENORM_MIN__ = @as(f16, 5.9604644775390625e-8);
 pub const __FLT16_HAS_DENORM__ = @as(c_int, 1);
 pub const __FLT16_DIG__ = @as(c_int, 3);
 pub const __FLT16_DECIMAL_DIG__ = @as(c_int, 5);
+pub const __FLT16_EPSILON__ = @as(f16, 9.765625e-4);
 pub const __FLT16_HAS_INFINITY__ = @as(c_int, 1);
 pub const __FLT16_HAS_QUIET_NAN__ = @as(c_int, 1);
 pub const __FLT16_MANT_DIG__ = @as(c_int, 11);
 pub const __FLT16_MAX_10_EXP__ = @as(c_int, 4);
 pub const __FLT16_MAX_EXP__ = @as(c_int, 16);
+pub const __FLT16_MAX__ = @as(f16, 6.5504e+4);
 pub const __FLT16_MIN_10_EXP__ = -@as(c_int, 4);
 pub const __FLT16_MIN_EXP__ = -@as(c_int, 13);
+pub const __FLT16_MIN__ = @as(f16, 6.103515625e-5);
 pub const __FLT_DENORM_MIN__ = @as(f32, 1.40129846e-45);
 pub const __FLT_HAS_DENORM__ = @as(c_int, 1);
 pub const __FLT_DIG__ = @as(c_int, 6);
@@ -1449,6 +1921,8 @@ pub const __STDC_HOSTED__ = @as(c_int, 1);
 pub const __STDC_VERSION__ = @as(c_long, 201710);
 pub const __STDC_UTF_16__ = @as(c_int, 1);
 pub const __STDC_UTF_32__ = @as(c_int, 1);
+pub const __MSVCRT_VERSION__ = @as(c_int, 0xE00);
+pub const _WIN32_WINNT = @as(c_int, 0x0a00);
 pub const _DEBUG = @as(c_int, 1);
 pub const STBI_INCLUDE_STB_IMAGE_H = "";
 pub const _INC_STDIO = "";
@@ -1457,9 +1931,10 @@ pub const _INC_CORECRT = "";
 pub const _INC__MINGW_H = "";
 pub const _INC_CRTDEFS_MACRO = "";
 pub inline fn __MINGW64_STRINGIFY(x: anytype) @TypeOf(__STRINGIFY(x)) {
+    _ = &x;
     return __STRINGIFY(x);
 }
-pub const __MINGW64_VERSION_MAJOR = @as(c_int, 10);
+pub const __MINGW64_VERSION_MAJOR = @as(c_int, 12);
 pub const __MINGW64_VERSION_MINOR = @as(c_int, 0);
 pub const __MINGW64_VERSION_BUGFIX = @as(c_int, 0);
 pub const __MINGW64_VERSION_RC = @as(c_int, 0);
@@ -1471,6 +1946,7 @@ pub const _M_X64 = @as(c_int, 100);
 pub const @"_" = @as(c_int, 1);
 pub const __MINGW_USE_UNDERSCORE_PREFIX = @as(c_int, 0);
 pub inline fn __MINGW_USYMBOL(sym: anytype) @TypeOf(sym) {
+    _ = &sym;
     return sym;
 }
 pub const __C89_NAMELESS = __MINGW_EXTENSION;
@@ -1497,11 +1973,13 @@ pub const __MINGW_HAVE_WIDE_C99_SCANF = @as(c_int, 1);
 pub const __MSABI_LONG = @import("std").zig.c_translation.Macros.L_SUFFIX;
 pub const __MINGW_GCC_VERSION = ((__GNUC__ * @as(c_int, 10000)) + (__GNUC_MINOR__ * @as(c_int, 100))) + __GNUC_PATCHLEVEL__;
 pub inline fn __MINGW_GNUC_PREREQ(major: anytype, minor: anytype) @TypeOf((__GNUC__ > major) or ((__GNUC__ == major) and (__GNUC_MINOR__ >= minor))) {
+    _ = &major;
+    _ = &minor;
     return (__GNUC__ > major) or ((__GNUC__ == major) and (__GNUC_MINOR__ >= minor));
 }
 pub inline fn __MINGW_MSC_PREREQ(major: anytype, minor: anytype) @TypeOf(@as(c_int, 0)) {
-    _ = @TypeOf(major);
-    _ = @TypeOf(minor);
+    _ = &major;
+    _ = &minor;
     return @as(c_int, 0);
 }
 pub const __MINGW_SEC_WARN_STR = "This function or variable may be unsafe, use _CRT_SECURE_NO_WARNINGS to disable deprecation";
@@ -1509,7 +1987,6 @@ pub const __MINGW_MSVC2005_DEPREC_STR = "This POSIX function is deprecated begin
 pub const __MINGW_ATTRIB_DEPRECATED_MSVC2005 = __MINGW_ATTRIB_DEPRECATED_STR(__MINGW_MSVC2005_DEPREC_STR);
 pub const __MINGW_ATTRIB_DEPRECATED_SEC_WARN = __MINGW_ATTRIB_DEPRECATED_STR(__MINGW_SEC_WARN_STR);
 pub const __mingw_static_ovr = __mingw_ovr;
-pub const __mingw_attribute_artificial = "";
 pub const __MINGW_FORTIFY_LEVEL = @as(c_int, 0);
 pub const __mingw_bos_ovr = __mingw_ovr;
 pub const __MINGW_FORTIFY_VA_ARG = @as(c_int, 0);
@@ -1525,8 +2002,7 @@ pub const __DECLSPEC_SUPPORTED = "";
 pub const USE___UUIDOF = @as(c_int, 0);
 pub const __CRT__NO_INLINE = @as(c_int, 1);
 pub const __MINGW_ATTRIB_NO_OPTIMIZE = "";
-pub const __MSVCRT_VERSION__ = @as(c_int, 0x700);
-pub const _WIN32_WINNT = @as(c_int, 0x0603);
+pub const _UCRT = "";
 pub const _INT128_DEFINED = "";
 pub const __int8 = u8;
 pub const __int16 = c_short;
@@ -1548,12 +2024,15 @@ pub const _CRT_PACKING = @as(c_int, 8);
 pub const __GNUC_VA_LIST = "";
 pub const _VA_LIST_DEFINED = "";
 pub inline fn _ADDRESSOF(v: anytype) @TypeOf(&v) {
+    _ = &v;
     return &v;
 }
 pub inline fn _CRT_STRINGIZE(_Value: anytype) @TypeOf(__CRT_STRINGIZE(_Value)) {
+    _ = &_Value;
     return __CRT_STRINGIZE(_Value);
 }
 pub inline fn _CRT_WIDE(_String: anytype) @TypeOf(__CRT_WIDE(_String)) {
+    _ = &_String;
     return __CRT_WIDE(_String);
 }
 pub const _W64 = "";
@@ -1571,14 +2050,15 @@ pub const _AGLOBAL = "";
 pub const _SECURECRT_FILL_BUFFER_PATTERN = @as(c_int, 0xFD);
 pub const _CRT_MANAGED_HEAP_DEPRECATE = "";
 pub const _CONST_RETURN = "";
-pub const UNALIGNED = __unaligned;
+pub const UNALIGNED = "";
 pub const __CRTDECL = __cdecl;
 pub const _ARGMAX = @as(c_int, 100);
 pub const _TRUNCATE = @import("std").zig.c_translation.cast(usize, -@as(c_int, 1));
 pub inline fn _CRT_UNUSED(x: anytype) anyopaque {
+    _ = &x;
     return @import("std").zig.c_translation.cast(anyopaque, x);
 }
-pub const __USE_MINGW_ANSI_STDIO = @as(c_int, 1);
+pub const __USE_MINGW_ANSI_STDIO = @as(c_int, 0);
 pub const __ANONYMOUS_DEFINED = "";
 pub const _ANONYMOUS_UNION = __MINGW_EXTENSION;
 pub const _ANONYMOUS_STRUCT = __MINGW_EXTENSION;
@@ -1599,6 +2079,7 @@ pub const DUMMYSTRUCTNAME3 = "";
 pub const DUMMYSTRUCTNAME4 = "";
 pub const DUMMYSTRUCTNAME5 = "";
 pub const __MINGW_DEBUGBREAK_IMPL = !(__has_builtin(__debugbreak) != 0);
+pub const __MINGW_FASTFAIL_IMPL = !(__has_builtin(__fastfail) != 0);
 pub const _CRTNOALIAS = "";
 pub const _CRTRESTRICT = "";
 pub const _SIZE_T_DEFINED = "";
@@ -1638,7 +2119,7 @@ pub const EOF = -@as(c_int, 1);
 pub const _FILE_DEFINED = "";
 pub const _P_tmpdir = "\\";
 pub const _wP_tmpdir = "\\";
-pub const L_tmpnam = @import("std").zig.c_translation.sizeof(_P_tmpdir) + @as(c_int, 12);
+pub const L_tmpnam = @as(c_int, 260);
 pub const SEEK_CUR = @as(c_int, 1);
 pub const SEEK_END = @as(c_int, 2);
 pub const SEEK_SET = @as(c_int, 0);
@@ -1648,7 +2129,7 @@ pub const STDERR_FILENO = @as(c_int, 2);
 pub const FILENAME_MAX = @as(c_int, 260);
 pub const FOPEN_MAX = @as(c_int, 20);
 pub const _SYS_OPEN = @as(c_int, 20);
-pub const TMP_MAX = @as(c_int, 32767);
+pub const TMP_MAX = @import("std").zig.c_translation.promoteIntLiteral(c_int, 2147483647, .decimal);
 pub const NULL = @import("std").zig.c_translation.cast(?*anyopaque, @as(c_int, 0));
 pub const _OFF_T_DEFINED = "";
 pub const _OFF_T_ = "";
@@ -1657,6 +2138,7 @@ pub const _FILE_OFFSET_BITS_SET_OFFT = "";
 pub const _iob = __iob_func();
 pub const _FPOS_T_DEFINED = "";
 pub inline fn _FPOSOFF(fp: anytype) c_long {
+    _ = &fp;
     return @import("std").zig.c_translation.cast(c_long, fp);
 }
 pub const _STDSTREAM_DEFINED = "";
@@ -1666,18 +2148,8 @@ pub const stderr = __acrt_iob_func(@as(c_int, 2));
 pub const _IOFBF = @as(c_int, 0x0000);
 pub const _IOLBF = @as(c_int, 0x0040);
 pub const _IONBF = @as(c_int, 0x0004);
-pub const _IOREAD = @as(c_int, 0x0001);
-pub const _IOWRT = @as(c_int, 0x0002);
-pub const _IOMYBUF = @as(c_int, 0x0008);
-pub const _IOEOF = @as(c_int, 0x0010);
-pub const _IOERR = @as(c_int, 0x0020);
-pub const _IOSTRG = @as(c_int, 0x0040);
-pub const _IORW = @as(c_int, 0x0080);
-pub const _TWO_DIGIT_EXPONENT = @as(c_int, 0x1);
 pub const __MINGW_PRINTF_FORMAT = printf;
 pub const __MINGW_SCANF_FORMAT = scanf;
-pub const __builtin_vsnprintf = __mingw_vsnprintf;
-pub const __builtin_vsprintf = __mingw_vsprintf;
 pub const _FILE_OFFSET_BITS_SET_FSEEKO = "";
 pub const _FILE_OFFSET_BITS_SET_FTELLO = "";
 pub const _CRT_PERROR_DEFINED = "";
@@ -1685,22 +2157,33 @@ pub const popen = _popen;
 pub const pclose = _pclose;
 pub const _CRT_DIRECTORY_DEFINED = "";
 pub const _WSTDIO_DEFINED = "";
-pub const WEOF = @import("std").zig.c_translation.cast(wint_t, @import("std").zig.c_translation.promoteIntLiteral(c_int, 0xFFFF, .hexadecimal));
+pub const WEOF = @import("std").zig.c_translation.cast(wint_t, @import("std").zig.c_translation.promoteIntLiteral(c_int, 0xFFFF, .hex));
 pub const _INC_SWPRINTF_INL = "";
 pub const _CRT_WPERROR_DEFINED = "";
 pub const wpopen = _wpopen;
+pub inline fn _putwc_nolock(_c: anytype, _stm: anytype) @TypeOf(_fputwc_nolock(_c, _stm)) {
+    _ = &_c;
+    _ = &_stm;
+    return _fputwc_nolock(_c, _stm);
+}
+pub inline fn _getwc_nolock(_c: anytype) @TypeOf(_fgetwc_nolock(_c)) {
+    _ = &_c;
+    return _fgetwc_nolock(_c);
+}
 pub const _STDIO_DEFINED = "";
-pub inline fn _getc_nolock(_stream: anytype) @TypeOf(_fgetc_nolock(_stream)) {
-    return _fgetc_nolock(_stream);
-}
-pub inline fn _putc_nolock(_c: anytype, _stream: anytype) @TypeOf(_fputc_nolock(_c, _stream)) {
-    return _fputc_nolock(_c, _stream);
-}
 pub inline fn _getchar_nolock() @TypeOf(_getc_nolock(stdin)) {
     return _getc_nolock(stdin);
 }
 pub inline fn _putchar_nolock(_c: anytype) @TypeOf(_putc_nolock(_c, stdout)) {
+    _ = &_c;
     return _putc_nolock(_c, stdout);
+}
+pub inline fn _getwchar_nolock() @TypeOf(_getwc_nolock(stdin)) {
+    return _getwc_nolock(stdin);
+}
+pub inline fn _putwchar_nolock(_c: anytype) @TypeOf(_putwc_nolock(_c, stdout)) {
+    _ = &_c;
+    return _putwc_nolock(_c, stdout);
 }
 pub const P_tmpdir = _P_tmpdir;
 pub const SYS_OPEN = _SYS_OPEN;
@@ -1740,7 +2223,7 @@ pub const SHRT_MAX = @as(c_int, 32767);
 pub const USHRT_MAX = @as(c_uint, 0xffff);
 pub const INT_MIN = -@import("std").zig.c_translation.promoteIntLiteral(c_int, 2147483647, .decimal) - @as(c_int, 1);
 pub const INT_MAX = @import("std").zig.c_translation.promoteIntLiteral(c_int, 2147483647, .decimal);
-pub const UINT_MAX = @import("std").zig.c_translation.promoteIntLiteral(c_uint, 0xffffffff, .hexadecimal);
+pub const UINT_MAX = @import("std").zig.c_translation.promoteIntLiteral(c_uint, 0xffffffff, .hex);
 pub const LONG_MIN = -@as(c_long, 2147483647) - @as(c_int, 1);
 pub const LONG_MAX = @as(c_long, 2147483647);
 pub const ULONG_MAX = @as(c_ulong, 0xffffffff);
@@ -1755,7 +2238,7 @@ pub const _I16_MAX = @as(c_int, 32767);
 pub const _UI16_MAX = @as(c_uint, 0xffff);
 pub const _I32_MIN = -@import("std").zig.c_translation.promoteIntLiteral(c_int, 2147483647, .decimal) - @as(c_int, 1);
 pub const _I32_MAX = @import("std").zig.c_translation.promoteIntLiteral(c_int, 2147483647, .decimal);
-pub const _UI32_MAX = @import("std").zig.c_translation.promoteIntLiteral(c_uint, 0xffffffff, .hexadecimal);
+pub const _UI32_MAX = @import("std").zig.c_translation.promoteIntLiteral(c_uint, 0xffffffff, .hex);
 pub const LONG_LONG_MAX = @as(c_longlong, 9223372036854775807);
 pub const LONG_LONG_MIN = -LONG_LONG_MAX - @as(c_int, 1);
 pub const ULONG_LONG_MAX = (@as(c_ulonglong, 2) * LONG_LONG_MAX) + @as(c_ulonglong, 1);
@@ -1764,7 +2247,6 @@ pub const _I64_MAX = @as(c_longlong, 9223372036854775807);
 pub const _UI64_MAX = @as(c_ulonglong, 0xffffffffffffffff);
 pub const SIZE_MAX = _UI64_MAX;
 pub const SSIZE_MAX = _I64_MAX;
-pub const __USE_MINGW_STRTOX = @as(c_int, 1);
 pub const EXIT_SUCCESS = @as(c_int, 0);
 pub const EXIT_FAILURE = @as(c_int, 1);
 pub const _ONEXIT_T_DEFINED = "";
@@ -1772,15 +2254,20 @@ pub const onexit_t = _onexit_t;
 pub const _DIV_T_DEFINED = "";
 pub const _CRT_DOUBLE_DEC = "";
 pub inline fn _PTR_LD(x: anytype) [*c]u8 {
+    _ = &x;
     return @import("std").zig.c_translation.cast([*c]u8, &x.*.ld);
 }
 pub const RAND_MAX = @as(c_int, 0x7fff);
 pub const MB_CUR_MAX = ___mb_cur_max_func();
 pub const __mb_cur_max = ___mb_cur_max_func();
 pub inline fn __max(a: anytype, b: anytype) @TypeOf(if (a > b) a else b) {
+    _ = &a;
+    _ = &b;
     return if (a > b) a else b;
 }
 pub inline fn __min(a: anytype, b: anytype) @TypeOf(if (a < b) a else b) {
+    _ = &a;
+    _ = &b;
     return if (a < b) a else b;
 }
 pub const _MAX_PATH = @as(c_int, 260);
@@ -1798,19 +2285,16 @@ pub const _MAX_ENV = @as(c_int, 32767);
 pub const _CRT_ERRNO_DEFINED = "";
 pub const errno = _errno().*;
 pub const _doserrno = __doserrno().*;
+pub const _sys_nerr = __sys_nerr().*;
+pub const _sys_errlist = __sys_errlist();
 pub const _fmode = __p__fmode().*;
-pub const __argc = __MINGW_IMP_SYMBOL(__argc).*;
+pub const __argc = __p___argc().*;
 pub const __argv = __p___argv().*;
-pub const __wargv = __MINGW_IMP_SYMBOL(__wargv).*;
-pub const _environ = __MINGW_IMP_SYMBOL(_environ).*;
-pub const _wenviron = __MINGW_IMP_SYMBOL(_wenviron).*;
-pub const _pgmptr = __MINGW_IMP_SYMBOL(_pgmptr).*;
-pub const _wpgmptr = __MINGW_IMP_SYMBOL(_wpgmptr).*;
-pub const _osplatform = __MINGW_IMP_SYMBOL(_osplatform).*;
-pub const _osver = __MINGW_IMP_SYMBOL(_osver).*;
-pub const _winver = __MINGW_IMP_SYMBOL(_winver).*;
-pub const _winmajor = __MINGW_IMP_SYMBOL(_winmajor).*;
-pub const _winminor = __MINGW_IMP_SYMBOL(_winminor).*;
+pub const __wargv = __p___wargv().*;
+pub const _environ = __p__environ().*;
+pub const _wenviron = __p__wenviron().*;
+pub const _pgmptr = __p__pgmptr().*;
+pub const _wpgmptr = __p__wpgmptr().*;
 pub const _CRT_TERMINATE_DEFINED = "";
 pub const _CRT_ABS_DEFINED = "";
 pub const _CRT_ATOF_DEFINED = "";
@@ -1828,7 +2312,7 @@ pub const _CRT_SWAB_DEFINED = "";
 pub const _INC_STDLIB_S = "";
 pub const _QSORT_S_DEFINED = "";
 pub const _MALLOC_H_ = "";
-pub const _HEAP_MAXREQ = @import("std").zig.c_translation.promoteIntLiteral(c_int, 0xFFFFFFFFFFFFFFE0, .hexadecimal);
+pub const _HEAP_MAXREQ = @import("std").zig.c_translation.promoteIntLiteral(c_int, 0xFFFFFFFFFFFFFFE0, .hex);
 pub const _HEAPEMPTY = -@as(c_int, 1);
 pub const _HEAPOK = -@as(c_int, 2);
 pub const _HEAPBADBEGIN = -@as(c_int, 3);
@@ -1841,19 +2325,19 @@ pub const _HEAPINFO_DEFINED = "";
 pub const __MM_MALLOC_H = "";
 pub const _MAX_WAIT_MALLOC_CRT = @import("std").zig.c_translation.promoteIntLiteral(c_int, 60000, .decimal);
 pub const _ALLOCA_S_THRESHOLD = @as(c_int, 1024);
-pub const _ALLOCA_S_STACK_MARKER = @import("std").zig.c_translation.promoteIntLiteral(c_int, 0xCCCC, .hexadecimal);
-pub const _ALLOCA_S_HEAP_MARKER = @import("std").zig.c_translation.promoteIntLiteral(c_int, 0xDDDD, .hexadecimal);
+pub const _ALLOCA_S_STACK_MARKER = @import("std").zig.c_translation.promoteIntLiteral(c_int, 0xCCCC, .hex);
+pub const _ALLOCA_S_HEAP_MARKER = @import("std").zig.c_translation.promoteIntLiteral(c_int, 0xDDDD, .hex);
 pub const _ALLOCA_S_MARKER_SIZE = @as(c_int, 16);
 pub inline fn _malloca(size: anytype) @TypeOf(if ((size + _ALLOCA_S_MARKER_SIZE) <= _ALLOCA_S_THRESHOLD) _MarkAllocaS(_alloca(size + _ALLOCA_S_MARKER_SIZE), _ALLOCA_S_STACK_MARKER) else _MarkAllocaS(malloc(size + _ALLOCA_S_MARKER_SIZE), _ALLOCA_S_HEAP_MARKER)) {
+    _ = &size;
     return if ((size + _ALLOCA_S_MARKER_SIZE) <= _ALLOCA_S_THRESHOLD) _MarkAllocaS(_alloca(size + _ALLOCA_S_MARKER_SIZE), _ALLOCA_S_STACK_MARKER) else _MarkAllocaS(malloc(size + _ALLOCA_S_MARKER_SIZE), _ALLOCA_S_HEAP_MARKER);
 }
 pub const _FREEA_INLINE = "";
-pub const tagLC_ID = struct_tagLC_ID;
-pub const lconv = struct_lconv;
-pub const __lc_time_data = struct___lc_time_data;
 pub const threadlocaleinfostruct = struct_threadlocaleinfostruct;
 pub const threadmbcinfostruct = struct_threadmbcinfostruct;
+pub const __lc_time_data = struct___lc_time_data;
 pub const localeinfo_struct = struct_localeinfo_struct;
+pub const tagLC_ID = struct_tagLC_ID;
 pub const _iobuf = struct__iobuf;
 pub const _div_t = struct__div_t;
 pub const _ldiv_t = struct__ldiv_t;

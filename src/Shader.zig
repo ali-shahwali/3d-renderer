@@ -74,7 +74,7 @@ pub fn create(self: *Shader) !void {
         var error_size: i32 = undefined;
         gl.getProgramiv(self.program_id, gl.INFO_LOG_LENGTH, &error_size);
 
-        var message = try self.allocator.alloc(u8, @intCast(error_size));
+        const message = try self.allocator.alloc(u8, @intCast(error_size));
         defer self.allocator.free(message);
 
         gl.getProgramInfoLog(self.program_id, error_size, &error_size, @as([*c]u8, @ptrCast(message)));
@@ -101,7 +101,7 @@ fn readShader(comptime path: []const u8) [*]const u8 {
 }
 
 fn compile(source: [*]const u8, shader_type: c_uint, alloc: Allocator) !u32 {
-    var result = gl.createShader(shader_type);
+    const result = gl.createShader(shader_type);
     gl.shaderSource(result, 1, &source, null);
     gl.compileShader(result);
 
@@ -113,7 +113,7 @@ fn compile(source: [*]const u8, shader_type: c_uint, alloc: Allocator) !u32 {
         var length: i32 = undefined;
         gl.getShaderiv(result, gl.INFO_LOG_LENGTH, &length);
 
-        var message = try alloc.alloc(u8, @intCast(length));
+        const message = try alloc.alloc(u8, @intCast(length));
         defer alloc.free(message);
 
         gl.getShaderInfoLog(result, length, &length, @ptrCast(message));

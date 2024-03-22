@@ -1,10 +1,9 @@
 .{
-    .name = "zmesh",
+    .name = "zmath",
     .version = "0.10.0",
     .paths = .{
         "build.zig",
         "build.zig.zon",
-        "libs",
         "src",
         "README.md",
     },

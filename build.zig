@@ -12,18 +12,16 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
+    // glfw
     const glfw_dep = b.dependency("mach_glfw", .{
         .target = target,
         .optimize = optimize,
     });
-
-    // glfw
-    exe.addModule("mach-glfw", glfw_dep.module("mach-glfw"));
-    @import("mach_glfw").link(glfw_dep.builder, exe);
+    exe.root_module.addImport("mach-glfw", glfw_dep.module("mach-glfw"));
 
     // opengl
-    exe.addModule("opengl", b.createModule(.{
-        .source_file = .{ .path = "lib/opengl/bindings.zig" },
+    exe.root_module.addImport("opengl", b.createModule(.{
+        .root_source_file = .{ .path = "lib/opengl/bindings.zig" },
     }));
 
     // stb
@@ -32,19 +30,18 @@ pub fn build(b: *std.Build) void {
         .file = .{ .path = "lib/stb/c/stb_image.c" },
         .flags = &.{ "-std=c99", "-fno-sanitize=undefined" },
     });
-    exe.addModule("stb", b.createModule(.{
-        .source_file = .{ .path = "lib/stb/stb.zig" },
+    exe.root_module.addImport("stb", b.createModule(.{
+        .root_source_file = .{ .path = "lib/stb/stb.zig" },
     }));
 
     // zmath
-    exe.addModule("zmath", b.createModule(.{
-        .source_file = .{ .path = "lib/zmath/main.zig" },
-    }));
+    const zmath = b.dependency("zmath", .{});
+    exe.root_module.addImport("zmath", zmath.module("root"));
 
     // zmesh
-    const zmesh = @import("lib/zmesh/build.zig");
-    const zmesh_pkg = zmesh.package(b, target, optimize, .{});
-    zmesh_pkg.link(exe);
+    const zmesh = b.dependency("zmesh", .{});
+    exe.root_module.addImport("zmesh", zmesh.module("root"));
+    exe.linkLibrary(zmesh.artifact("zmesh"));
 
     b.installArtifact(exe);
 

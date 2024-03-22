@@ -1351,7 +1351,7 @@ pub inline fn sqrt(v: anytype) @TypeOf(v) {
 }
 
 pub inline fn abs(v: anytype) @TypeOf(v) {
-    return @fabs(v); // load, andps
+    return @abs(v); // load, andps
 }
 
 pub inline fn select(mask: anytype, v0: anytype, v1: anytype) @TypeOf(v0, v1) {
@@ -1479,21 +1479,15 @@ test "zmath.modAngle" {
 
 pub inline fn mulAdd(v0: anytype, v1: anytype, v2: anytype) @TypeOf(v0, v1, v2) {
     const T = @TypeOf(v0, v1, v2);
-    // if (@import("zmath_options").enable_cross_platform_determinism) {
-    //     return v0 * v1 + v2; // Compiler will generate mul, add sequence (no fma even if the target supports it).
-    // } else {
-    //     if (cpu_arch == .x86_64 and has_avx and has_fma) {
-    //         return @mulAdd(T, v0, v1, v2);
-    //     } else {
-    //         // NOTE(mziulek): On .x86_64 without HW fma instructions @mulAdd maps to really slow code!
-    //         return v0 * v1 + v2;
-    //     }
-    // }
-    if (cpu_arch == .x86_64 and has_avx and has_fma) {
-        return @mulAdd(T, v0, v1, v2);
+    if (@import("zmath_options").enable_cross_platform_determinism) {
+        return v0 * v1 + v2; // Compiler will generate mul, add sequence (no fma even if the target supports it).
     } else {
-        // NOTE(mziulek): On .x86_64 without HW fma instructions @mulAdd maps to really slow code!
-        return v0 * v1 + v2;
+        if (cpu_arch == .x86_64 and has_avx and has_fma) {
+            return @mulAdd(T, v0, v1, v2);
+        } else {
+            // NOTE(mziulek): On .x86_64 without HW fma instructions @mulAdd maps to really slow code!
+            return v0 * v1 + v2;
+        }
     }
 }
 
@@ -3630,7 +3624,7 @@ test "zmath.sincos32" {
 }
 
 fn asin32(v: f32) f32 {
-    const x = @fabs(v);
+    const x = @abs(v);
     var omx = 1.0 - x;
     if (omx < 0.0) {
         omx = 0.0;
@@ -3684,7 +3678,7 @@ test "zmath.asin32" {
 }
 
 fn acos32(v: f32) f32 {
-    const x = @fabs(v);
+    const x = @abs(v);
     var omx = 1.0 - x;
     if (omx < 0.0) {
         omx = 0.0;
@@ -3739,8 +3733,7 @@ test "zmath.acos32" {
 
 pub fn modAngle32(in_angle: f32) f32 {
     const angle = in_angle + math.pi;
-
-    var temp: f32 = @fabs(angle);
+    var temp: f32 = @abs(angle);
     temp = temp - (2.0 * math.pi * @as(f32, @floatFromInt(@as(i32, @intFromFloat(temp / math.pi)))));
     temp = temp - math.pi;
     if (angle < 0.0) {
